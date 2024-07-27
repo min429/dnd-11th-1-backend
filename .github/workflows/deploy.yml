@@ -72,8 +72,10 @@ jobs:
           host: ${{ secrets.NCP_DEV_IP }}
           password: ${{ secrets.NCP_PASSWORD }}
           script: |
-            sudo cp /home/.docker/docker-compose.yml /home
+            cp /home/.docker/docker-compose.yml /home
             cd /home
-            sudo docker pull ${{ secrets.DOCKER_USERNAME }}/${{ secrets.DOCKER_REPO }}
+            docker pull ${{ secrets.DOCKER_USERNAME }}/${{ secrets.DOCKER_REPO }}
+            docker-compose stop server
+            docker-compose rm -f server
             docker-compose up -d
             docker image prune -f

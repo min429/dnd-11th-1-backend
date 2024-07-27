@@ -1,5 +1,9 @@
 package com.dnd.accompany.domain.example.entity;
 
+import org.hibernate.annotations.SoftDelete;
+
+import com.dnd.accompany.domain.common.entity.TimeBaseEntity;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -14,8 +18,9 @@ import lombok.NoArgsConstructor;
 @Getter
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@SoftDelete
 @Table(name = "example")
-public class Example {
+public class Example extends TimeBaseEntity {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
