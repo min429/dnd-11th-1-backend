@@ -1,14 +1,8 @@
 name: local CI
 
 on:
-  push:
-    branches: [ "main" ]
   pull_request:
     branches: [ "main" ]
-
-env:
-  JWT_ISSUER: dnd-11-1
-  JWT_SECRET_KEY: ${{ secrets.JWT_SECRET_KEY }}
 
 jobs:
   build-test:
