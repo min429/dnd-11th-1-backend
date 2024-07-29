@@ -49,3 +49,10 @@ management:
       exposure:
         include: "*"
         exclude: env, beans
+
+jwt:
+  issuer: MATE_TRIP
+  secret-key: thisisthejwtsecretkeyforlocalenvironment
+  expiry-seconds:
+    access-token: 180000000
+    refresh-token: 1209600
