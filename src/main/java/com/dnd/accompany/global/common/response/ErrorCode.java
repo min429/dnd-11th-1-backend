@@ -12,7 +12,13 @@ public enum ErrorCode {
 	INTERNAL_SERVER(MatripConstant.INTERNAL_SERVER_ERROR, "GLOBAL-500", "서버 내부 오류입니다."),
 
 	// ---- 유저 ---- //
-	USER_NOT_FOUND(MatripConstant.NOT_FOUND, "USER-001", "존재하지 않는 회원입니다.");
+	USER_NOT_FOUND(MatripConstant.NOT_FOUND, "USER-001", "존재하지 않는 회원입니다."),
+
+	// ---- 토큰 ---- //
+	INVALID_TOKEN(MatripConstant.UNAUTHORIZED, "TOKEN-001", "유효하지 않은 토큰입니다."),
+	TOKEN_EXPIRED(MatripConstant.UNAUTHORIZED, "TOKEN-002", "만료된 토큰입니다."),
+	REFRESH_TOKEN_NOT_FOUND(MatripConstant.NOT_FOUND, "TOKEN-003", "리프레시 토큰을 찾을 수 없습니다."),
+	REFRESH_TOKEN_EXPIRED(MatripConstant.UNAUTHORIZED, "TOKEN-004", "만료된 리프레시 토큰입니다.");
 
 	private final Integer status;
 	private final String code;
