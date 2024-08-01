@@ -1,6 +1,7 @@
 package com.dnd.accompany.domain.user.entity;
 
-import org.hibernate.annotations.SoftDelete;
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.SQLRestriction;
 
 import com.dnd.accompany.domain.common.entity.TimeBaseEntity;
 
@@ -20,9 +21,10 @@ import lombok.NoArgsConstructor;
 @Entity
 @Getter
 @Builder
-@SoftDelete
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@SQLRestriction("deleted = false")
+@SQLDelete(sql = "UPDATE t_order SET deleted = true WHERE id = ?")
 public class User extends TimeBaseEntity {
 
 	@Id
