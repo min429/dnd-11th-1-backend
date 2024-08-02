@@ -1,0 +1,23 @@
+server:
+  port: 8080
+  shutdown: graceful
+
+spring:
+  jpa:
+    database-platform: org.hibernate.dialect.MySQLDialect
+    open-in-view: false
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+        hbm2ddl.auto: update
+  oauth2:
+    kakao:
+      host: https://kapi.kakao.com
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+        exclude: env, beans

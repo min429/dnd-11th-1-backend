@@ -1,17 +1,3 @@
-server:
-  port: 8080
-  shutdown: graceful
-
-spring:
-  jpa:
-    database-platform: org.hibernate.dialect.MySQLDialect
-    open-in-view: false
-    show-sql: true
-    properties:
-      hibernate:
-        format_sql: true
-        hbm2ddl.auto: update
-
 datasource:
   db:
     pool-name: accompany
@@ -42,13 +28,6 @@ datasource:
       autoReconnectForPools: true
       usePipelineAuth: false
       useBatchMultiSend: false
-
-management:
-  endpoints:
-    web:
-      exposure:
-        include: "*"
-        exclude: env, beans
 
 jwt:
   issuer: MATE_TRIP
