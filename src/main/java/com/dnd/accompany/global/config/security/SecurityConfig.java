@@ -7,6 +7,11 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+
+import com.dnd.accompany.global.filter.ExceptionHandlerFilter;
+import com.dnd.accompany.global.filter.JwtAuthenticationEntryPoint;
+import com.dnd.accompany.global.filter.JwtAuthenticationFilter;
 
 import lombok.RequiredArgsConstructor;
 
@@ -14,6 +19,10 @@ import lombok.RequiredArgsConstructor;
 @EnableWebSecurity
 @RequiredArgsConstructor
 public class SecurityConfig {
+
+	private final JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
+	private final JwtAuthenticationFilter jwtAuthenticationFilter;
+	private final ExceptionHandlerFilter exceptionHandlerFilter;
 
 	@Bean
 	public SecurityFilterChain httpSecurity(HttpSecurity http) throws Exception {
@@ -25,6 +34,9 @@ public class SecurityConfig {
 			.formLogin(AbstractHttpConfigurer::disable)
 			.anonymous(AbstractHttpConfigurer::disable)
 			.authorizeHttpRequests(auth -> auth.anyRequest().permitAll())
+			.exceptionHandling(handler -> handler.authenticationEntryPoint(jwtAuthenticationEntryPoint))
+			.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
+			.addFilterBefore(exceptionHandlerFilter, JwtAuthenticationFilter.class)
 			.build();
 	}
 

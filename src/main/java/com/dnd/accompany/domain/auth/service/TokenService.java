@@ -1,18 +1,23 @@
 package com.dnd.accompany.domain.auth.service;
 
+import java.util.List;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.stereotype.Service;
 
 import com.dnd.accompany.domain.auth.dto.AuthUserInfo;
 import com.dnd.accompany.domain.auth.dto.Tokens;
+import com.dnd.accompany.domain.auth.dto.jwt.JwtAuthentication;
+import com.dnd.accompany.domain.auth.dto.jwt.JwtAuthenticationToken;
 import com.dnd.accompany.domain.auth.entity.RefreshToken;
 import com.dnd.accompany.domain.auth.exception.ExpiredTokenException;
 import com.dnd.accompany.domain.auth.exception.RefreshTokenNotFoundException;
 import com.dnd.accompany.domain.auth.infrastructure.RefreshTokenRepository;
 import com.dnd.accompany.global.common.response.ErrorCode;
 
+import io.jsonwebtoken.Claims;
 import lombok.RequiredArgsConstructor;
 
 @Service
@@ -85,4 +90,23 @@ public class TokenService {
 			.ifPresent(refreshTokenRepository::delete);
 	}
 
+	/**
+	 * AccessToken에서 유효한 Authentication(인증 주체) 객체를 추출합니다.
+	 */
+	public JwtAuthenticationToken getAuthenticationByAccessToken(String accessToken) {
+		jwtTokenProvider.validateToken(accessToken);
+
+		Claims claims = jwtTokenProvider.getClaims(accessToken);
+
+		Long id = claims.get("userId", Long.class);
+
+		JwtAuthentication principal = new JwtAuthentication(id, accessToken);
+
+		/**
+		 * 권한 분리가 필요할 경우 수정합니다.
+		 */
+		List<SimpleGrantedAuthority> authorities = List.of(new SimpleGrantedAuthority("user"));
+
+		return new JwtAuthenticationToken(principal, null, authorities);
+	}
 }
