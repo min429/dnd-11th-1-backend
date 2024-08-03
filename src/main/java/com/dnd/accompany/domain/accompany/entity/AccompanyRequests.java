@@ -33,7 +33,7 @@ import lombok.NoArgsConstructor;
 	@Index(name = "IX_accompany_boards_id", columnList = "accompany_boards_id")
 })
 @SQLRestriction("deleted = false")
-@SQLDelete(sql = "UPDATE t_order SET deleted = true WHERE id = ?")
+@SQLDelete(sql = "UPDATE accompany_requests SET deleted = true WHERE id = ?")
 public class AccompanyRequests extends TimeBaseEntity {
 
 	@Id

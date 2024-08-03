@@ -25,7 +25,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Table(name = "accompany_boards")
 @SQLRestriction("deleted = false")
-@SQLDelete(sql = "UPDATE t_order SET deleted = true WHERE id = ?")
+@SQLDelete(sql = "UPDATE accompany_boards SET deleted = true WHERE id = ?")
 public class AccompanyBoards extends TimeBaseEntity {
 
 	@Id
