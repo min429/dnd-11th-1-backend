@@ -11,6 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -25,7 +26,7 @@ public class UserProfileController {
     @Operation(summary = "온보딩 정보 저장")
     @PostMapping
     public void createUserProfile(@AuthenticationPrincipal JwtAuthentication user,
-                                  @Valid CreateUserProfileRequest createUserProfileRequest
+                                  @RequestBody @Valid CreateUserProfileRequest createUserProfileRequest
     ) {
         userProfileService.createUserProfile(user.getId(), createUserProfileRequest);
     }

@@ -13,6 +13,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -29,7 +30,7 @@ public class AuthController {
 
     @Operation(summary = "로그인")
     @GetMapping("/sign-in")
-    public ResponseEntity<Tokens> signIn(LoginRequest loginRequest) {
+    public ResponseEntity<Tokens> signIn(@RequestBody LoginRequest loginRequest) {
         OAuthUserDataResponse oAuthUserData = oAuthService.login(loginRequest);
 
         OAuthUserInfo oAuthUserInfo = OAuthUserInfo.from(oAuthUserData);

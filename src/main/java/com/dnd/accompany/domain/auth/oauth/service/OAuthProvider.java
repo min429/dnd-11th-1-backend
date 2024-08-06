@@ -16,9 +16,9 @@ public enum OAuthProvider {
 
 	private final String name;
 
-	public static OAuthProvider get(OAuthProvider oAuthProvider) {
+	public static OAuthProvider get(String name) {
 		return Arrays.stream(OAuthProvider.values())
-			.filter(provider -> provider.equals(oAuthProvider))
+			.filter(provider -> provider.getName().equals(name))
 			.findAny()
 			.orElseThrow(() -> new NotFoundException(ErrorCode.INVALID_PROVIDER));
 	}
