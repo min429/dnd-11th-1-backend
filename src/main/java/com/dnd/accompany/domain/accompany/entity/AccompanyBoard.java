@@ -5,6 +5,10 @@ import java.time.LocalDateTime;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.SQLRestriction;
 
+import com.dnd.accompany.domain.accompany.entity.enums.Category;
+import com.dnd.accompany.domain.accompany.entity.enums.PreferredAge;
+import com.dnd.accompany.domain.accompany.entity.enums.PreferredGender;
+import com.dnd.accompany.domain.accompany.entity.enums.Region;
 import com.dnd.accompany.domain.common.entity.TimeBaseEntity;
 
 import jakarta.persistence.Column;
@@ -26,11 +30,10 @@ import lombok.NoArgsConstructor;
 @Table(name = "accompany_boards")
 @SQLRestriction("deleted = false")
 @SQLDelete(sql = "UPDATE accompany_boards SET deleted = true WHERE id = ?")
-public class AccompanyBoards extends TimeBaseEntity {
+public class AccompanyBoard extends TimeBaseEntity {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name = "accompany_boards_id")
 	private Long id;
 
 	@Column(nullable = false)
@@ -42,11 +45,9 @@ public class AccompanyBoards extends TimeBaseEntity {
 	)
 	private String content;
 
+	@Enumerated(EnumType.STRING)
 	@Column(nullable = false)
-	private String region;
-
-	@Column(nullable = false)
-	private String district;
+	private Region region;
 
 	@Column(nullable = false)
 	private LocalDateTime startDate;
@@ -72,16 +73,16 @@ public class AccompanyBoards extends TimeBaseEntity {
 	@Column(nullable = false)
 	private PreferredGender preferredGender;
 
+	private boolean deleted = Boolean.FALSE;
+
 	@Builder
-	public AccompanyBoards(Long id, String title, String content, String region, String district,
-		LocalDateTime startDate,
+	public AccompanyBoard(Long id, String title, String content, Region region, LocalDateTime startDate,
 		LocalDateTime endDate, Long headCount, Long capacity, Category category, PreferredAge preferredAge,
 		PreferredGender preferredGender) {
 		this.id = id;
 		this.title = title;
 		this.content = content;
 		this.region = region;
-		this.district = district;
 		this.startDate = startDate;
 		this.endDate = endDate;
 		this.headCount = headCount;
@@ -89,17 +90,5 @@ public class AccompanyBoards extends TimeBaseEntity {
 		this.category = category;
 		this.preferredAge = preferredAge;
 		this.preferredGender = preferredGender;
-	}
-
-	public enum PreferredAge {
-		SAME, ANY
-	}
-
-	public enum Category {
-		FULL, PART, LODGING, TOUR, MEAL
-	}
-
-	public enum PreferredGender {
-		SAME, ANY
 	}
 }

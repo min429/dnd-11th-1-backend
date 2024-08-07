@@ -3,13 +3,9 @@ package com.dnd.accompany.domain.accompany.entity;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.SQLRestriction;
 
-import com.dnd.accompany.domain.user.entity.User;
-
 import jakarta.persistence.Column;
 import jakarta.persistence.ConstraintMode;
 import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.ForeignKey;
 import jakarta.persistence.GeneratedValue;
@@ -27,40 +23,28 @@ import lombok.NoArgsConstructor;
 @Getter
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@Table(name = "accompany_users", indexes = {
-	@Index(name = "IX_user_id", columnList = "user_id"),
-	@Index(name = "IX_accompany_boards_id", columnList = "accompany_boards_id")
-})
+@Table(name = "accompany_tags", indexes = @Index(name = "IX_accompany_boards_id", columnList = "accompany_boards_id"))
 @SQLRestriction("deleted = false")
-@SQLDelete(sql = "UPDATE accompany_users SET deleted = true WHERE id = ?")
-public class AccompanyUsers {
+@SQLDelete(sql = "UPDATE accompany_tags SET deleted = true WHERE id = ?")
+public class AccompanyTag {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name = "accompany_users_id")
 	private Long id;
 
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "user_id", nullable = false, foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT))
-	private User user;
-
-	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "accompany_boards_id", nullable = false, foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT))
-	private AccompanyBoards accompanyBoards;
+	private AccompanyBoard accompanyBoard;
 
-	@Enumerated(EnumType.STRING)
 	@Column(nullable = false)
-	private Role role;
+	private String name;
+
+	private boolean deleted = Boolean.FALSE;
 
 	@Builder
-	public AccompanyUsers(Long id, User user, AccompanyBoards accompanyBoards, Role role) {
+	public AccompanyTag(Long id, AccompanyBoard accompanyBoard, String name) {
 		this.id = id;
-		this.user = user;
-		this.accompanyBoards = accompanyBoards;
-		this.role = role;
-	}
-
-	public enum Role {
-		HOST, APPLICANT, PARTICIPANT
+		this.accompanyBoard = accompanyBoard;
+		this.name = name;
 	}
 }

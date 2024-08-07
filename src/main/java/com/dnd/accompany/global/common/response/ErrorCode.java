@@ -28,7 +28,11 @@ public enum ErrorCode {
 	PROFILE_ALREADY_EXISTS(MatripConstant.BAD_REQUEST, "PROFILE-001", "이미 프로필 정보가 존재합니다."),
 
 	// ---- 네트워크 ---- //
-	HTTP_CLIENT_REQUEST_FAILED(MatripConstant.INTERNAL_SERVER_ERROR, "NETWORK-001", "서버 요청에 실패하였습니다.");
+	HTTP_CLIENT_REQUEST_FAILED(MatripConstant.INTERNAL_SERVER_ERROR, "NETWORK-001", "서버 요청에 실패하였습니다."),
+
+	// ---- 동행글 ---- //
+	ACCOMPANY_BOARD_NOT_FOUND(MatripConstant.NOT_FOUND, "ACCOMPANY_BOARD-001", "동행글을 찾을 수 없습니다."),
+	ACCOMPANY_BOARD_ACCESS_DENIED(MatripConstant.FORBIDDEN, "ACCOMPANY_BOARD-002", "동행글 접근 권한이 없습니다.");
 
 	private final Integer status;
 	private final String code;

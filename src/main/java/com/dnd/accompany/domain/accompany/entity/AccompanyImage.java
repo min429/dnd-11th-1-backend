@@ -3,14 +3,9 @@ package com.dnd.accompany.domain.accompany.entity;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.SQLRestriction;
 
-import com.dnd.accompany.domain.common.entity.TimeBaseEntity;
-import com.dnd.accompany.domain.user.entity.User;
-
 import jakarta.persistence.Column;
 import jakarta.persistence.ConstraintMode;
 import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.ForeignKey;
 import jakarta.persistence.GeneratedValue;
@@ -28,40 +23,31 @@ import lombok.NoArgsConstructor;
 @Getter
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@Table(name = "accompany_requests", indexes = {
-	@Index(name = "IX_user_id", columnList = "user_id"),
+@Table(name = "accompany_images", indexes = {
+	@Index(name = "IX_accompany_images_id", columnList = "accompany_images_id"),
 	@Index(name = "IX_accompany_boards_id", columnList = "accompany_boards_id")
 })
 @SQLRestriction("deleted = false")
-@SQLDelete(sql = "UPDATE accompany_requests SET deleted = true WHERE id = ?")
-public class AccompanyRequests extends TimeBaseEntity {
+@SQLDelete(sql = "UPDATE accompany_images SET deleted = true WHERE id = ?")
+public class AccompanyImage {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name = "accompany_requests_id")
 	private Long id;
 
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "user_id", nullable = false, foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT))
-	private User user;
-
-	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "accompany_boards_id", nullable = false, foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT))
-	private AccompanyBoards accompanyBoards;
+	private AccompanyBoard accompanyBoard;
 
-	@Enumerated(EnumType.STRING)
-	@Column(nullable = false)
-	private RequestState requestState;
+	@Column(nullable = false, length = 2000)
+	private String imageUrl;
+
+	private boolean deleted = Boolean.FALSE;
 
 	@Builder
-	public AccompanyRequests(Long id, User user, AccompanyBoards accompanyBoards, RequestState requestState) {
+	public AccompanyImage(Long id, AccompanyBoard accompanyBoard, String imageUrl) {
 		this.id = id;
-		this.user = user;
-		this.accompanyBoards = accompanyBoards;
-		this.requestState = requestState;
-	}
-
-	public enum RequestState {
-		APPROVED, HOLDING, DECLINED
+		this.accompanyBoard = accompanyBoard;
+		this.imageUrl = imageUrl;
 	}
 }

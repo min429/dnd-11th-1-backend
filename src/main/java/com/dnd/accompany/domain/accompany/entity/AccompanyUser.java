@@ -3,9 +3,14 @@ package com.dnd.accompany.domain.accompany.entity;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.SQLRestriction;
 
+import com.dnd.accompany.domain.accompany.entity.enums.Role;
+import com.dnd.accompany.domain.user.entity.User;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.ConstraintMode;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.ForeignKey;
 import jakarta.persistence.GeneratedValue;
@@ -23,27 +28,37 @@ import lombok.NoArgsConstructor;
 @Getter
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@Table(name = "accompany_tags", indexes = @Index(name = "IX_accompany_boards_id", columnList = "accompany_boards_id"))
+@Table(name = "accompany_users", indexes = {
+	@Index(name = "IX_user_id", columnList = "user_id"),
+	@Index(name = "IX_accompany_boards_id", columnList = "accompany_boards_id")
+})
 @SQLRestriction("deleted = false")
-@SQLDelete(sql = "UPDATE accompany_tags SET deleted = true WHERE id = ?")
-public class AccompanyTags {
+@SQLDelete(sql = "UPDATE accompany_users SET deleted = true WHERE id = ?")
+public class AccompanyUser {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name = "accompany_tags_id")
 	private Long id;
 
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "accompany_boards_id", nullable = false, foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT))
-	private AccompanyBoards accompanyBoards;
+	@JoinColumn(name = "user_id", nullable = false, foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT))
+	private User user;
 
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "accompany_boards_id", nullable = false, foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT))
+	private AccompanyBoard accompanyBoard;
+
+	@Enumerated(EnumType.STRING)
 	@Column(nullable = false)
-	private String name;
+	private Role role;
+
+	private boolean deleted = Boolean.FALSE;
 
 	@Builder
-	public AccompanyTags(Long id, AccompanyBoards accompanyBoards, String name) {
+	public AccompanyUser(Long id, User user, AccompanyBoard accompanyBoard, Role role) {
 		this.id = id;
-		this.accompanyBoards = accompanyBoards;
-		this.name = name;
+		this.user = user;
+		this.accompanyBoard = accompanyBoard;
+		this.role = role;
 	}
 }
