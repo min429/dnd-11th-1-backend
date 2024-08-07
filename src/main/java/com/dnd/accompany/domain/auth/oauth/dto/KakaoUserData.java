@@ -16,7 +16,6 @@ public class KakaoUserData {
 	@Getter
 	@NoArgsConstructor
 	static class KakaoAccount {
-		private String email;
 		private KakaoProfile profile;
 	}
 
@@ -24,13 +23,16 @@ public class KakaoUserData {
 	@NoArgsConstructor
 	static class KakaoProfile {
 		private String nickname;
-	}
 
-	public String getEmail() {
-		return kakaoAccount.getEmail();
+		@JsonProperty("thumbnail_image_url")
+		private String profileImage;
 	}
 
 	public String getNickname() {
 		return kakaoAccount.getProfile().getNickname();
+	}
+
+	public String getProfileImage() {
+		return kakaoAccount.getProfile().getProfileImage();
 	}
 }

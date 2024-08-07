@@ -12,6 +12,6 @@ import lombok.NoArgsConstructor;
 public class OAuthUserDataResponse {
 	private String provider;
 	private String oauthId;
-	private String email;
+	private String profileImageUrl;
 	private String nickname;
 }

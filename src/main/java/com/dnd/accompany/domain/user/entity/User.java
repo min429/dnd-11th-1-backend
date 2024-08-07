@@ -32,9 +32,6 @@ public class User extends TimeBaseEntity {
 	private Long id;
 
 	@Column(nullable = false)
-	private String email;
-
-	@Column(nullable = false)
 	private String nickname;
 
 	@Column(nullable = false)
@@ -46,12 +43,17 @@ public class User extends TimeBaseEntity {
 	)
 	private String oauthId;
 
-	public static User of(String email, String nickname, String provider, String oauthId) {
+	@Column(length = 1000)
+	private String profileImageUrl;
+
+	private boolean deleted = false;
+
+	public static User of(String nickname, String provider, String oauthId, String profileImageUrl) {
 		return User.builder()
-			.email(email)
-			.nickname(nickname)
-			.provider(provider)
-			.oauthId(oauthId)
-			.build();
+				.nickname(nickname)
+				.provider(provider)
+				.oauthId(oauthId)
+				.profileImageUrl(profileImageUrl)
+				.build();
 	}
 }

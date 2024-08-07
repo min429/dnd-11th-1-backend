@@ -25,10 +25,10 @@ public class UserService {
     @Transactional
     public User registerUser(OAuthUserInfo oauthUserInfo) {
         return userRepository.save(User.of(
-                oauthUserInfo.getEmail(),
                 oauthUserInfo.getNickname(),
                 oauthUserInfo.getProvider(),
-                oauthUserInfo.getOauthId()
+                oauthUserInfo.getOauthId(),
+                oauthUserInfo.getProfileImageUrl()
         ));
     }
 }

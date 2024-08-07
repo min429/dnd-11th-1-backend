@@ -39,7 +39,7 @@ class UserServiceTest {
                 .provider("KAKAO")
                 .nickname("TESTER1")
                 .oauthId("KA-123")
-                .email("test@gmail.com")
+                .profileImageUrl("https://")
                 .build();
 
         oauthUserInfo = OAuthUserInfo.from(oAuthUserDataResponse);
@@ -50,10 +50,10 @@ class UserServiceTest {
     void success() {
         //given
         User newUser = User.of(
-                oauthUserInfo.getEmail(),
                 oauthUserInfo.getNickname(),
                 oauthUserInfo.getProvider(),
-                oauthUserInfo.getOauthId()
+                oauthUserInfo.getOauthId(),
+                oauthUserInfo.getProfileImageUrl()
         );
 
         ReflectionTestUtils.setField(newUser, "id", 1L);
@@ -74,10 +74,10 @@ class UserServiceTest {
     void success2() {
         //given
         User existingUser = User.of(
-                oauthUserInfo.getEmail(),
                 oauthUserInfo.getNickname(),
                 oauthUserInfo.getProvider(),
-                oauthUserInfo.getOauthId()
+                oauthUserInfo.getOauthId(),
+                oauthUserInfo.getProfileImageUrl()
         );
 
         ReflectionTestUtils.setField(existingUser, "id", 1L);

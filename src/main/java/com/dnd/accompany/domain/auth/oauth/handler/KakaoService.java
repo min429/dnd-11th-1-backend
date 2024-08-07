@@ -48,22 +48,23 @@ public class KakaoService implements OAuthAuthenticationHandler {
 
 		try {
 			ResponseEntity<KakaoUserData> response = restTemplate.exchange(
-				url,
-				HttpMethod.GET,
-				httpRequest,
-				KakaoUserData.class
+					url,
+					HttpMethod.GET,
+					httpRequest,
+					KakaoUserData.class
 			);
 			assert response.getBody() != null;
 
 			KakaoUserData userData = response.getBody();
-			return OAuthUserDataResponse.builder()
-				.provider(getAuthProvider().toString())
-				.oauthId(userData.getId().toString())
-				.email(userData.getEmail())
-				.nickname(userData.getNickname())
-				.build();
 
-		} catch (RestClientException e) {
+			return OAuthUserDataResponse.builder()
+					.provider(getAuthProvider().toString())
+					.profileImageUrl(userData.getProfileImage())
+					.oauthId(userData.getId().toString())
+					.nickname(userData.getNickname())
+					.build();
+
+		} catch (Exception e) {
 			log.warn("[KakaoService] failed to get OAuth User Data = {}", request.getAccessToken());
 
 			if (e instanceof RestClientResponseException) {
