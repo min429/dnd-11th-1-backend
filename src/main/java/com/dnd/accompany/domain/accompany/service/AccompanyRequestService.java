@@ -22,7 +22,7 @@ public class AccompanyRequestService {
 	public void save(Long userId, CreateAccompanyRequest request) {
 		accompanyRequestRepository.save(AccompanyRequest.builder()
 			.user(User.builder().id(userId).build())
-			.accompanyBoard(AccompanyBoard.builder().id(request.boardId()).build())
+			.accompanyBoard(getAccompanyBoard(request.boardId()))
 			.requestState(HOLDING)
 			.introduce(request.introduce())
 			.chatLink(request.chatLink())
@@ -32,5 +32,9 @@ public class AccompanyRequestService {
 	@Transactional
 	public void deleteByBoardId(Long boardId) {
 		accompanyRequestRepository.deleteByAccompanyBoardId(boardId);
+	}
+
+	public AccompanyBoard getAccompanyBoard(Long boardId) {
+		return AccompanyBoard.builder().id(boardId).build();
 	}
 }
