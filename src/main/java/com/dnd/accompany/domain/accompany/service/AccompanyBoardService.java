@@ -96,6 +96,11 @@ public class AccompanyBoardService {
 	private static UserProfileDetailInfo getUserProfileDetailInfo(FindDetailInfoResult detailInfo) {
 		return UserProfileDetailInfo.builder()
 			.nickname(detailInfo.nickname())
+			.provider(detailInfo.provider())
+			.gender(detailInfo.gender())
+			.travelPreferences(detailInfo.travelPreferences())
+			.travelStyles(detailInfo.travelStyles())
+			.foodPreferences(detailInfo.foodPreferences())
 			.build();
 	}
 

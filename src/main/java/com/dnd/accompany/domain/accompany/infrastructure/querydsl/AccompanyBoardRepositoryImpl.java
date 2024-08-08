@@ -4,6 +4,7 @@ import static com.dnd.accompany.domain.accompany.entity.QAccompanyBoard.*;
 import static com.dnd.accompany.domain.accompany.entity.QAccompanyUser.*;
 import static com.dnd.accompany.domain.accompany.entity.enums.Role.*;
 import static com.dnd.accompany.domain.user.entity.QUser.*;
+import static com.dnd.accompany.domain.user.entity.QUserProfile.*;
 
 import java.util.List;
 import java.util.Optional;
@@ -76,11 +77,17 @@ public class AccompanyBoardRepositoryImpl implements AccompanyBoardRepositoryCus
 				accompanyBoard.category,
 				accompanyBoard.preferredAge,
 				accompanyBoard.preferredGender,
-				user.nickname))
+				user.nickname,
+				user.provider,
+				userProfile.gender,
+				userProfile.travelPreferences,
+				userProfile.travelStyles,
+				userProfile.foodPreferences))
 			.from(accompanyBoard)
 			.leftJoin(accompanyUser).on(accompanyUser.accompanyBoard.id.eq(accompanyBoard.id)
 				.and(isHost()))
 			.leftJoin(user).on(user.id.eq(accompanyUser.user.id))
+			.leftJoin(userProfile).on(userProfile.userId.eq(user.id))
 			.where(accompanyBoard.id.eq(boardId))
 			.fetchOne();
 
