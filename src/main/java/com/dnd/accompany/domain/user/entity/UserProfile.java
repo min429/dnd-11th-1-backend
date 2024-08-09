@@ -46,4 +46,6 @@ public class UserProfile {
     @Builder.Default
     @ElementCollection(targetClass = FoodPreference.class)
     private List<FoodPreference> foodPreferences = new ArrayList<>();
+
+    private boolean deleted = Boolean.FALSE;
 }
