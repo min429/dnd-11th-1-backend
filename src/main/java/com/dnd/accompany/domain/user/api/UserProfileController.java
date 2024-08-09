@@ -2,6 +2,7 @@ package com.dnd.accompany.domain.user.api;
 
 import com.dnd.accompany.domain.auth.dto.jwt.JwtAuthentication;
 import com.dnd.accompany.domain.user.dto.CreateUserProfileRequest;
+import com.dnd.accompany.domain.user.dto.CreateUserProfileResponse;
 import com.dnd.accompany.domain.user.service.UserProfileService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -25,10 +26,11 @@ public class UserProfileController {
 
     @Operation(summary = "온보딩 정보 저장")
     @PostMapping
-    public void createUserProfile(@AuthenticationPrincipal JwtAuthentication user,
-                                  @RequestBody @Valid CreateUserProfileRequest createUserProfileRequest
+    public ResponseEntity<CreateUserProfileResponse> createUserProfile(@AuthenticationPrincipal JwtAuthentication user,
+                                                       @RequestBody @Valid CreateUserProfileRequest createUserProfileRequest
     ) {
         userProfileService.createUserProfile(user.getId(), createUserProfileRequest);
+        return ResponseEntity.ok(new CreateUserProfileResponse(user.getId()));
     }
 
     @Operation(summary = "온보딩 여부 조회")
