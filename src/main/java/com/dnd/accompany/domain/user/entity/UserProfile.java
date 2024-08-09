@@ -33,14 +33,17 @@ public class UserProfile {
 
     private int birthYear;
 
+    @Builder.Default
     @ElementCollection(targetClass = TravelPreference.class)
     @Enumerated(EnumType.STRING)
     private List<TravelPreference> travelPreferences = new ArrayList<>();
 
+    @Builder.Default
     @ElementCollection(targetClass = TravelStyle.class)
     @Enumerated(EnumType.STRING)
     private List<TravelStyle> travelStyles = new ArrayList<>();
 
+    @Builder.Default
     @ElementCollection(targetClass = FoodPreference.class)
     private List<FoodPreference> foodPreferences = new ArrayList<>();
 }
