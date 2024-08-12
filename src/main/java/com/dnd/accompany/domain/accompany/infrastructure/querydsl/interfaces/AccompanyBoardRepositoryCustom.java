@@ -5,11 +5,12 @@ import java.util.Optional;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 
-import com.dnd.accompany.domain.accompany.api.dto.AccompanyBoardInfo;
+import com.dnd.accompany.domain.accompany.api.dto.FindBoardThumbnailsResult;
 import com.dnd.accompany.domain.accompany.api.dto.FindDetailInfoResult;
+import com.dnd.accompany.domain.accompany.entity.enums.Region;
 
 public interface AccompanyBoardRepositoryCustom {
-	Slice<AccompanyBoardInfo> findBoardInfos(Pageable pageable);
+	Slice<FindBoardThumbnailsResult> findBoardThumbnails(Pageable pageable, Region region);
 
 	Optional<FindDetailInfoResult> findDetailInfo(Long boardId);
 

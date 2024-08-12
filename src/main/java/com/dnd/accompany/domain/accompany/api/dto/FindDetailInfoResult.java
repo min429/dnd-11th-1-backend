@@ -26,6 +26,7 @@ public record FindDetailInfoResult(
 	PreferredGender preferredGender,
 	String nickname,
 	String provider,
+	int birthYear,
 	Gender gender,
 	List<TravelPreference> travelPreferences,
 	List<TravelStyle> travelStyles,

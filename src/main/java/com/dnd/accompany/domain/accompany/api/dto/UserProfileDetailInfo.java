@@ -17,6 +17,7 @@ import lombok.NoArgsConstructor;
 public class UserProfileDetailInfo {
 	private String nickname;
 	private String provider;
+	private int birthYear;
 	private Gender gender;
 	private List<TravelPreference> travelPreferences;
 	private List<TravelStyle> travelStyles;
@@ -24,11 +25,12 @@ public class UserProfileDetailInfo {
 	// List<UserImages> 추가 예정
 
 	@Builder
-	public UserProfileDetailInfo(String nickname, String provider, Gender gender,
+	public UserProfileDetailInfo(String nickname, String provider, int birthYear, Gender gender,
 		List<TravelPreference> travelPreferences,
 		List<TravelStyle> travelStyles, List<FoodPreference> foodPreferences) {
 		this.nickname = nickname;
 		this.provider = provider;
+		this.birthYear = birthYear;
 		this.gender = gender;
 		this.travelPreferences = travelPreferences;
 		this.travelStyles = travelStyles;

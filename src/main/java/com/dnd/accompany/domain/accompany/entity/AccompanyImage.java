@@ -24,7 +24,6 @@ import lombok.NoArgsConstructor;
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Table(name = "accompany_images", indexes = {
-	@Index(name = "IX_accompany_images_id", columnList = "accompany_images_id"),
 	@Index(name = "IX_accompany_boards_id", columnList = "accompany_boards_id")
 })
 @SQLRestriction("deleted = false")
