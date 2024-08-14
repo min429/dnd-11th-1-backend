@@ -26,12 +26,19 @@ public class UserProfile {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(nullable = false)
     private Long userId;
+
+    @Column(length = 50)
+    private String description;
 
     @Enumerated(EnumType.STRING)
     private Gender gender;
 
     private int birthYear;
+
+    @Column
+    private String socialMediaUrl;
 
     @Builder.Default
     @ElementCollection(targetClass = TravelPreference.class)
@@ -48,4 +55,22 @@ public class UserProfile {
     private List<FoodPreference> foodPreferences = new ArrayList<>();
 
     private boolean deleted = Boolean.FALSE;
+
+    public void updateUserProfile(
+            String description,
+            Gender gender,
+            int birthYear,
+            List<TravelPreference> travelPreferences,
+            List<TravelStyle> travelStyles,
+            List<FoodPreference> foodPreferences,
+            String socialMediaUrl
+    ) {
+        this.description = description;
+        this.gender = gender;
+        this.birthYear = birthYear;
+        this.travelPreferences = travelPreferences;
+        this.travelStyles = travelStyles;
+        this.foodPreferences = foodPreferences;
+        this.socialMediaUrl = socialMediaUrl;
+    }
 }

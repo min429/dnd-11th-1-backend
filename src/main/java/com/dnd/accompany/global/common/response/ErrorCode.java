@@ -26,6 +26,7 @@ public enum ErrorCode {
 
 	// ---- 프로필 ---- //
 	PROFILE_ALREADY_EXISTS(MatripConstant.BAD_REQUEST, "PROFILE-001", "이미 프로필 정보가 존재합니다."),
+	PROFILE_NOT_FOUND(MatripConstant.BAD_REQUEST, "PROFILE-002", "프로필 정보가 존재하지 않습니다."),
 
 	// ---- 네트워크 ---- //
 	HTTP_CLIENT_REQUEST_FAILED(MatripConstant.INTERNAL_SERVER_ERROR, "NETWORK-001", "서버 요청에 실패하였습니다."),

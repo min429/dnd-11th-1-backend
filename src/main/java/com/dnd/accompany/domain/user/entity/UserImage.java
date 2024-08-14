@@ -38,7 +38,7 @@ public class UserImage extends TimeBaseEntity {
 
     private boolean deleted = Boolean.FALSE;
 
-    public static UserImage of(Long id, Long userId, String imageUrl) {
+    public static UserImage of(Long userId, String imageUrl) {
         return UserImage.builder()
                 .userId(userId)
                 .imageUrl(imageUrl)

@@ -1,5 +1,6 @@
 package com.dnd.accompany.domain.user.entity;
 
+import io.jsonwebtoken.lang.Assert;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.SQLRestriction;
 
@@ -16,6 +17,8 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+
+import static org.springframework.util.Assert.notNull;
 
 @Table(name = "users")
 @Entity
@@ -55,5 +58,12 @@ public class User extends TimeBaseEntity {
 				.oauthId(oauthId)
 				.profileImageUrl(profileImageUrl)
 				.build();
+	}
+
+	public void updateUser(String nickname, String profileImageUrl) {
+		notNull(nickname, "닉네임은 필수 값입니다.");
+
+		this.nickname = nickname;
+		this.profileImageUrl = profileImageUrl;
 	}
 }
