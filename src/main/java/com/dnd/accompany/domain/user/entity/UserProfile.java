@@ -2,6 +2,7 @@ package com.dnd.accompany.domain.user.entity;
 
 import com.dnd.accompany.domain.user.entity.enums.FoodPreference;
 import com.dnd.accompany.domain.user.entity.enums.Gender;
+import com.dnd.accompany.domain.user.entity.enums.Grade;
 import com.dnd.accompany.domain.user.entity.enums.TravelPreference;
 import com.dnd.accompany.domain.user.entity.enums.TravelStyle;
 import jakarta.persistence.*;
@@ -11,6 +12,8 @@ import org.hibernate.annotations.SQLRestriction;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import static com.dnd.accompany.domain.user.entity.enums.Grade.ROOKIE;
 
 @Table(name = "user_profiles")
 @Entity
@@ -40,18 +43,20 @@ public class UserProfile {
     @Column
     private String socialMediaUrl;
 
+    private Grade grade = ROOKIE;
+
     @Builder.Default
-    @ElementCollection(targetClass = TravelPreference.class)
+    @ElementCollection(targetClass = TravelPreference.class, fetch = FetchType.EAGER)
     @Enumerated(EnumType.STRING)
     private List<TravelPreference> travelPreferences = new ArrayList<>();
 
     @Builder.Default
-    @ElementCollection(targetClass = TravelStyle.class)
+    @ElementCollection(targetClass = TravelStyle.class, fetch = FetchType.EAGER)
     @Enumerated(EnumType.STRING)
     private List<TravelStyle> travelStyles = new ArrayList<>();
 
     @Builder.Default
-    @ElementCollection(targetClass = FoodPreference.class)
+    @ElementCollection(targetClass = FoodPreference.class, fetch = FetchType.EAGER)
     private List<FoodPreference> foodPreferences = new ArrayList<>();
 
     private boolean deleted = Boolean.FALSE;

@@ -4,6 +4,7 @@ import com.dnd.accompany.domain.user.entity.User;
 import com.dnd.accompany.domain.user.entity.UserProfile;
 import com.dnd.accompany.domain.user.entity.enums.FoodPreference;
 import com.dnd.accompany.domain.user.entity.enums.Gender;
+import com.dnd.accompany.domain.user.entity.enums.Grade;
 import com.dnd.accompany.domain.user.entity.enums.TravelPreference;
 import com.dnd.accompany.domain.user.entity.enums.TravelStyle;
 
@@ -18,6 +19,7 @@ public record UserProfileResponse(
     Gender gender,
     int birthYear,
     String socialMediaUrl,
+    Grade grade,
     List<TravelPreference> travelPreferences,
     List<TravelStyle> travelStyles,
     List<FoodPreference> foodPreferences
@@ -33,6 +35,7 @@ public record UserProfileResponse(
                 userProfile.getGender(),
                 userProfile.getBirthYear(),
                 userProfile.getSocialMediaUrl(),
+                userProfile.getGrade(),
                 userProfile.getTravelPreferences(),
                 userProfile.getTravelStyles(),
                 userProfile.getFoodPreferences()
