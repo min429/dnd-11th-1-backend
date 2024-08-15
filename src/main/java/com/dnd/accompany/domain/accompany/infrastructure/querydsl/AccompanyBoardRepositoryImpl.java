@@ -16,7 +16,7 @@ import org.springframework.data.domain.SliceImpl;
 import org.springframework.stereotype.Repository;
 
 import com.dnd.accompany.domain.accompany.api.dto.FindBoardThumbnailsResult;
-import com.dnd.accompany.domain.accompany.api.dto.FindDetailInfoResult;
+import com.dnd.accompany.domain.accompany.api.dto.UserProfileThumbnail;
 import com.dnd.accompany.domain.accompany.entity.enums.Region;
 import com.dnd.accompany.domain.accompany.infrastructure.querydsl.interfaces.AccompanyBoardRepositoryCustom;
 import com.querydsl.core.BooleanBuilder;
@@ -48,6 +48,7 @@ public class AccompanyBoardRepositoryImpl implements AccompanyBoardRepositoryCus
 
 	@Override
 	public Slice<FindBoardThumbnailsResult> findBoardThumbnails(Pageable pageable, Region region) {
+
 		List<FindBoardThumbnailsResult> content = queryFactory
 			.select(Projections.constructor(FindBoardThumbnailsResult.class,
 				accompanyBoard.id,
@@ -79,40 +80,27 @@ public class AccompanyBoardRepositoryImpl implements AccompanyBoardRepositoryCus
 		return new SliceImpl<>(content, pageable, hasNext);
 	}
 
-	/**
-	 * 동행글, 프로필 정보를 한번에 가져옵니다.
-	 */
 	@Override
-	public Optional<FindDetailInfoResult> findDetailInfo(Long boardId) {
-		FindDetailInfoResult result = queryFactory
-			.select(Projections.constructor(FindDetailInfoResult.class,
-				accompanyBoard.id,
-				accompanyBoard.title,
-				accompanyBoard.content,
-				accompanyBoard.region,
-				accompanyBoard.startDate,
-				accompanyBoard.endDate,
-				accompanyBoard.headCount,
-				accompanyBoard.capacity,
-				accompanyBoard.category,
-				accompanyBoard.preferredAge,
-				accompanyBoard.preferredGender,
+	public Optional<UserProfileThumbnail> findUserProfileThumbnail(Long userId) {
+		return Optional.of(queryFactory
+			.select(Projections.constructor(UserProfileThumbnail.class,
+				user.id,
 				user.nickname,
-				user.provider,
+				user.profileImageUrl,
 				userProfile.birthYear,
-				userProfile.gender,
-				userProfile.travelPreferences,
-				userProfile.travelStyles,
-				userProfile.foodPreferences))
-			.from(accompanyUser)
-			.join(accompanyUser.accompanyBoard, accompanyBoard)
-			.join(accompanyUser.user, user)
-			.join(userProfile).on(userProfile.userId.eq(user.id))
-			.where(accompanyBoard.id.eq(boardId))
-			.where(isHost())
-			.fetchOne();
-
-		return Optional.ofNullable(result);
+				userProfile.gender
+			))
+			.from(user)
+			.leftJoin(userProfile).on(userProfile.userId.eq(user.id))
+			.where(user.id.eq(userId))
+			.groupBy(
+				user.id,
+				user.nickname,
+				user.profileImageUrl,
+				userProfile.birthYear,
+				userProfile.gender
+			)
+			.fetchOne());
 	}
 
 	@Override

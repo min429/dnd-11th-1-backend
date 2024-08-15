@@ -15,15 +15,16 @@ import com.dnd.accompany.domain.accompany.api.dto.AccompanyBoardThumbnail;
 import com.dnd.accompany.domain.accompany.api.dto.CreateAccompanyBoardRequest;
 import com.dnd.accompany.domain.accompany.api.dto.CreateAccompanyBoardResponse;
 import com.dnd.accompany.domain.accompany.api.dto.FindBoardThumbnailsResult;
-import com.dnd.accompany.domain.accompany.api.dto.FindDetailInfoResult;
 import com.dnd.accompany.domain.accompany.api.dto.PageResponse;
 import com.dnd.accompany.domain.accompany.api.dto.ReadAccompanyBoardResponse;
-import com.dnd.accompany.domain.accompany.api.dto.UserProfileDetailInfo;
+import com.dnd.accompany.domain.accompany.api.dto.UserProfileThumbnail;
 import com.dnd.accompany.domain.accompany.entity.AccompanyBoard;
 import com.dnd.accompany.domain.accompany.entity.enums.Region;
 import com.dnd.accompany.domain.accompany.exception.AccompanyBoardAccessDeniedException;
 import com.dnd.accompany.domain.accompany.exception.AccompanyBoardNotFoundException;
 import com.dnd.accompany.domain.accompany.infrastructure.AccompanyBoardRepository;
+import com.dnd.accompany.domain.user.exception.UserNotFoundException;
+import com.dnd.accompany.domain.user.exception.UserProfileNotFoundException;
 import com.dnd.accompany.global.common.response.ErrorCode;
 
 import lombok.RequiredArgsConstructor;
@@ -49,7 +50,7 @@ public class AccompanyBoardService {
 				.endDate(request.endDate())
 				.headCount(1L)
 				.capacity(request.capacity())
-				.category(request.category())
+				.categories(request.categories())
 				.preferredAge(request.preferredAge())
 				.preferredGender(request.preferredGender())
 				.build()
@@ -71,7 +72,7 @@ public class AccompanyBoardService {
 	}
 
 	/**
-	 * imageUrls 타입을 String -> list<String>로 변환합니다.
+	 * imageUrls의 타입을 String -> List<String>로 변환합니다.
 	 */
 	private static List<AccompanyBoardThumbnail> getAccompanyBoardThumbnails(List<FindBoardThumbnailsResult> results) {
 		List<AccompanyBoardThumbnail> thumbnails = results.stream()
@@ -90,13 +91,30 @@ public class AccompanyBoardService {
 
 	@Transactional(readOnly = true)
 	public ReadAccompanyBoardResponse read(Long boardId) {
-		FindDetailInfoResult detailInfo = accompanyBoardRepository.findDetailInfo(boardId)
+		AccompanyBoardDetailInfo boardDetailInfo = getAccompanyBoardDetailInfo(boardId);
+		UserProfileThumbnail profileThumbnail = getUserProfileThumbnail(boardId);
+
+		return new ReadAccompanyBoardResponse(boardDetailInfo, profileThumbnail);
+	}
+
+	private UserProfileThumbnail getUserProfileThumbnail(Long boardId) {
+		Long userId = accompanyUserService.findUserIdByAccompanyBoardId(boardId)
+			.orElseThrow(() -> new UserNotFoundException(ErrorCode.USER_NOT_FOUND));
+
+		UserProfileThumbnail profileThumbnail = accompanyBoardRepository.findUserProfileThumbnail(userId)
+			.orElseThrow(() -> new UserProfileNotFoundException(ErrorCode.PROFILE_NOT_FOUND));
+		return profileThumbnail;
+	}
+
+	private AccompanyBoardDetailInfo getAccompanyBoardDetailInfo(Long boardId) {
+		AccompanyBoard accompanyBoard = accompanyBoardRepository.findByIdWithCategories(boardId)
 			.orElseThrow(() -> new AccompanyBoardNotFoundException(ErrorCode.ACCOMPANY_BOARD_NOT_FOUND));
 
-		AccompanyBoardDetailInfo accompanyBoardDetailInfo = getAccompanyBoardDetailInfo(detailInfo);
-		UserProfileDetailInfo userProfileDetailInfo = getUserProfileDetailInfo(detailInfo);
+		List<String> tagNames = accompanyTagService.findTagNamesByAccompanyBoardId(boardId);
+		List<String> imageUrls = accompanyImageService.findImageUrlsByAccompanyBoardId(boardId);
 
-		return new ReadAccompanyBoardResponse(accompanyBoardDetailInfo, userProfileDetailInfo);
+		AccompanyBoardDetailInfo boardDetailInfo = new AccompanyBoardDetailInfo(accompanyBoard, tagNames, imageUrls);
+		return boardDetailInfo;
 	}
 
 	@Transactional
@@ -110,33 +128,5 @@ public class AccompanyBoardService {
 		} else {
 			throw new AccompanyBoardAccessDeniedException(ErrorCode.ACCOMPANY_BOARD_ACCESS_DENIED);
 		}
-	}
-
-	private UserProfileDetailInfo getUserProfileDetailInfo(FindDetailInfoResult detailInfo) {
-		return UserProfileDetailInfo.builder()
-			.nickname(detailInfo.nickname())
-			.provider(detailInfo.provider())
-			.birthYear(detailInfo.birthYear())
-			.gender(detailInfo.gender())
-			.travelPreferences(detailInfo.travelPreferences())
-			.travelStyles(detailInfo.travelStyles())
-			.foodPreferences(detailInfo.foodPreferences())
-			.build();
-	}
-
-	private AccompanyBoardDetailInfo getAccompanyBoardDetailInfo(FindDetailInfoResult detailInfo) {
-		return AccompanyBoardDetailInfo.builder()
-			.boardId(detailInfo.boardId())
-			.title(detailInfo.title())
-			.content(detailInfo.content())
-			.region(detailInfo.region())
-			.startDate(detailInfo.startDate())
-			.endDate(detailInfo.endDate())
-			.headCount(detailInfo.headCount())
-			.capacity(detailInfo.capacity())
-			.category(detailInfo.category())
-			.preferredAge(detailInfo.preferredAge())
-			.preferredGender(detailInfo.preferredGender())
-			.build();
 	}
 }

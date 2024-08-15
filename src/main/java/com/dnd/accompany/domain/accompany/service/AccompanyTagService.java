@@ -28,6 +28,11 @@ public class AccompanyTagService {
 		accompanyTagRepository.saveAll(tags);
 	}
 
+	@Transactional(readOnly = true)
+	public List<String> findTagNamesByAccompanyBoardId(Long boardId) {
+		return accompanyTagRepository.findNamesByAccompanyBoardId(boardId);
+	}
+
 	@Transactional
 	public void deleteByBoardId(Long boardId) {
 		accompanyTagRepository.deleteByAccompanyBoardId(boardId);

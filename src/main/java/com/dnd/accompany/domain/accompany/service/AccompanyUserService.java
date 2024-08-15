@@ -1,5 +1,7 @@
 package com.dnd.accompany.domain.accompany.service;
 
+import java.util.Optional;
+
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -25,6 +27,11 @@ public class AccompanyUserService {
 			.user(User.builder().id(userId).build())
 			.role(role)
 			.build());
+	}
+
+	@Transactional(readOnly = true)
+	public Optional<Long> findUserIdByAccompanyBoardId(Long boardId) {
+		return accompanyUserRepository.findUserIdByAccompanyBoardId(boardId);
 	}
 
 	@Transactional(readOnly = true)

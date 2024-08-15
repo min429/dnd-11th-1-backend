@@ -28,6 +28,11 @@ public class AccompanyImageService {
 		accompanyImageRepository.saveAll(images);
 	}
 
+	@Transactional(readOnly = true)
+	public List<String> findImageUrlsByAccompanyBoardId(Long boardId) {
+		return accompanyImageRepository.findImageUrlsByAccompanyBoardId(boardId);
+	}
+
 	@Transactional
 	public void deleteByBoardId(Long boardId) {
 		accompanyImageRepository.deleteByAccompanyBoardId(boardId);

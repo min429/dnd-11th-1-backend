@@ -1,6 +1,8 @@
 package com.dnd.accompany.domain.accompany.entity;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.SQLRestriction;
@@ -12,6 +14,7 @@ import com.dnd.accompany.domain.accompany.entity.enums.Region;
 import com.dnd.accompany.domain.common.entity.TimeBaseEntity;
 
 import jakarta.persistence.Column;
+import jakarta.persistence.ElementCollection;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
@@ -20,12 +23,15 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+@Builder
 @Getter
 @Entity
+@AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Table(name = "accompany_boards")
 @SQLRestriction("deleted = false")
@@ -61,9 +67,10 @@ public class AccompanyBoard extends TimeBaseEntity {
 	@Column(nullable = false)
 	private Long capacity;
 
+	@Builder.Default
+	@ElementCollection(targetClass = Category.class)
 	@Enumerated(EnumType.STRING)
-	@Column(nullable = false)
-	private Category category;
+	private List<Category> categories = new ArrayList<>();
 
 	@Enumerated(EnumType.STRING)
 	@Column(nullable = false)
@@ -74,21 +81,4 @@ public class AccompanyBoard extends TimeBaseEntity {
 	private PreferredGender preferredGender;
 
 	private boolean deleted = Boolean.FALSE;
-
-	@Builder
-	public AccompanyBoard(Long id, String title, String content, Region region, LocalDateTime startDate,
-		LocalDateTime endDate, Long headCount, Long capacity, Category category, PreferredAge preferredAge,
-		PreferredGender preferredGender) {
-		this.id = id;
-		this.title = title;
-		this.content = content;
-		this.region = region;
-		this.startDate = startDate;
-		this.endDate = endDate;
-		this.headCount = headCount;
-		this.capacity = capacity;
-		this.category = category;
-		this.preferredAge = preferredAge;
-		this.preferredGender = preferredGender;
-	}
 }

@@ -22,12 +22,12 @@ public class UserProfileDetailInfo {
 	private List<TravelPreference> travelPreferences;
 	private List<TravelStyle> travelStyles;
 	private List<FoodPreference> foodPreferences;
-	// List<UserImages> 추가 예정
+	private List<String> userImageUrls;
 
 	@Builder
 	public UserProfileDetailInfo(String nickname, String provider, int birthYear, Gender gender,
 		List<TravelPreference> travelPreferences,
-		List<TravelStyle> travelStyles, List<FoodPreference> foodPreferences) {
+		List<TravelStyle> travelStyles, List<FoodPreference> foodPreferences, List<String> userImageUrls) {
 		this.nickname = nickname;
 		this.provider = provider;
 		this.birthYear = birthYear;
@@ -35,5 +35,6 @@ public class UserProfileDetailInfo {
 		this.travelPreferences = travelPreferences;
 		this.travelStyles = travelStyles;
 		this.foodPreferences = foodPreferences;
+		this.userImageUrls = userImageUrls;
 	}
 }
