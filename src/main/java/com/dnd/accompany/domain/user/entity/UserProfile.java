@@ -3,6 +3,8 @@ package com.dnd.accompany.domain.user.entity;
 import java.util.ArrayList;
 import java.util.List;
 
+import jakarta.persistence.Column;
+import jakarta.persistence.FetchType;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.SQLRestriction;
 
@@ -70,6 +72,7 @@ public class UserProfile {
 
   @Builder.Default
   @ElementCollection(targetClass = FoodPreference.class, fetch = FetchType.EAGER)
+  @Enumerated(EnumType.STRING)
   private List<FoodPreference> foodPreferences = new ArrayList<>();
 
   private boolean deleted = Boolean.FALSE;
