@@ -5,6 +5,8 @@ import com.dnd.accompany.domain.user.dto.CreateUserProfileRequest;
 import com.dnd.accompany.domain.user.dto.CreateUserProfileResponse;
 import com.dnd.accompany.domain.user.dto.UpdateUserProfileImageRequest;
 import com.dnd.accompany.domain.user.dto.UpdateUserProfileRequest;
+import com.dnd.accompany.domain.user.dto.UserProfileDetailResponse;
+import com.dnd.accompany.domain.user.dto.UserProfileResponse;
 import com.dnd.accompany.domain.user.service.UserProfileService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -19,7 +21,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-@Tag(name = "Onboarding")
+@Tag(name = "프로필")
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/profiles")
@@ -59,5 +61,19 @@ public class UserProfileController {
 
         Long userId = userProfileService.updateUserProfileImages(user.getId(), updateUserProfileImageRequest);
         return ResponseEntity.ok(userId);
+    }
+
+    @Operation(summary = "유저 프로필 상세 조회")
+    @GetMapping("/details")
+    public ResponseEntity<UserProfileDetailResponse> getUserProfileDetails(@AuthenticationPrincipal JwtAuthentication user) {
+        UserProfileDetailResponse userProfile = userProfileService.findUserProfileDetails(user.getId());
+        return ResponseEntity.ok(userProfile);
+    }
+
+    @Operation(summary = "유저 프로필 조회")
+    @GetMapping
+    public ResponseEntity<UserProfileResponse> getUserProfile(@AuthenticationPrincipal JwtAuthentication user) {
+        UserProfileResponse userProfile = userProfileService.findUserProfile(user.getId());
+        return ResponseEntity.ok(userProfile);
     }
 }
