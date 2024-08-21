@@ -46,7 +46,6 @@ public class AccompanyBoardRepositoryImpl implements AccompanyBoardRepositoryCus
 
 	@Override
 	public Slice<FindBoardThumbnailsResult> findBoardThumbnails(Pageable pageable, Region region) {
-
 		List<FindBoardThumbnailsResult> content = queryFactory
 			.select(Projections.constructor(FindBoardThumbnailsResult.class,
 				accompanyBoard.id,

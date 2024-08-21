@@ -59,7 +59,7 @@ public class AccompanyBoardService {
 	/**
 	 * imageUrls의 타입을 String -> List<String>로 변환합니다.
 	 */
-	private static List<AccompanyBoardThumbnail> getBoardThumbnails(List<FindBoardThumbnailsResult> results) {
+	private List<AccompanyBoardThumbnail> getBoardThumbnails(List<FindBoardThumbnailsResult> results) {
 		List<AccompanyBoardThumbnail> thumbnails = results.stream()
 			.map(result -> AccompanyBoardThumbnail.builder()
 				.boardId(result.boardId())
