@@ -29,7 +29,7 @@ public class AccompanyImageService {
 	}
 
 	@Transactional(readOnly = true)
-	public List<String> findImageUrlsByAccompanyBoardId(Long boardId) {
+	public List<String> getImageUrls(Long boardId) {
 		return accompanyImageRepository.findImageUrlsByAccompanyBoardId(boardId);
 	}
 

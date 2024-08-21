@@ -5,12 +5,16 @@ import java.util.Optional;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.dnd.accompany.domain.accompany.api.dto.UserProfileThumbnail;
 import com.dnd.accompany.domain.accompany.entity.AccompanyBoard;
 import com.dnd.accompany.domain.accompany.entity.AccompanyUser;
 import com.dnd.accompany.domain.accompany.entity.enums.Role;
 import com.dnd.accompany.domain.accompany.infrastructure.AccompanyBoardRepository;
 import com.dnd.accompany.domain.accompany.infrastructure.AccompanyUserRepository;
 import com.dnd.accompany.domain.user.entity.User;
+import com.dnd.accompany.domain.user.exception.UserNotFoundException;
+import com.dnd.accompany.domain.user.exception.UserProfileNotFoundException;
+import com.dnd.accompany.global.common.response.ErrorCode;
 
 import lombok.RequiredArgsConstructor;
 
@@ -18,7 +22,6 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class AccompanyUserService {
 	private final AccompanyUserRepository accompanyUserRepository;
-	private final AccompanyBoardRepository accompanyBoardRepository;
 
 	@Transactional
 	public void save(Long userId, AccompanyBoard accompanyBoard, Role role) {
@@ -30,17 +33,28 @@ public class AccompanyUserService {
 	}
 
 	@Transactional(readOnly = true)
-	public Optional<Long> findUserIdByAccompanyBoardId(Long boardId) {
-		return accompanyUserRepository.findUserIdByAccompanyBoardId(boardId);
+	public UserProfileThumbnail getUserProfileThumbnail(Long boardId) {
+		Long userId = accompanyUserRepository.findUserIdByAccompanyBoardId(boardId)
+			.orElseThrow(() -> new UserNotFoundException(ErrorCode.USER_NOT_FOUND));
+
+		UserProfileThumbnail profileThumbnail = accompanyUserRepository.findUserProfileThumbnail(userId)
+			.orElseThrow(() -> new UserProfileNotFoundException(ErrorCode.PROFILE_NOT_FOUND));
+		return profileThumbnail;
 	}
 
 	@Transactional(readOnly = true)
-	public boolean isHostOfBoard(Long userId, Long boardId) {
-		return accompanyBoardRepository.isHostOfBoard(userId, boardId);
+	public Long getHostIdByAccompanyBoardId(Long boardId){
+		return accompanyUserRepository.findHostIdByAccompanyBoardId(boardId)
+			.orElseThrow(() -> new UserNotFoundException(ErrorCode.USER_NOT_FOUND));
 	}
 
 	@Transactional
 	public void deleteByBoardId(Long boardId) {
 		accompanyUserRepository.deleteByAccompanyBoardId(boardId);
+	}
+
+	public String getNickname(Long userId){
+		return accompanyUserRepository.findNickname(userId)
+			.orElseThrow(() -> new UserNotFoundException(ErrorCode.USER_NOT_FOUND));
 	}
 }

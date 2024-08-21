@@ -23,6 +23,7 @@ import com.dnd.accompany.domain.accompany.api.dto.ReadAccompanyBoardResponse;
 import com.dnd.accompany.domain.accompany.entity.enums.Region;
 import com.dnd.accompany.domain.accompany.service.AccompanyBoardService;
 import com.dnd.accompany.domain.accompany.service.AccompanyRequestService;
+import com.dnd.accompany.domain.accompany.service.AccompanyServiceFacade;
 import com.dnd.accompany.domain.auth.dto.jwt.JwtAuthentication;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -38,13 +39,14 @@ public class AccompanyBoardController {
 
 	private final AccompanyBoardService accompanyBoardService;
 	private final AccompanyRequestService accompanyRequestService;
+	private final AccompanyServiceFacade accompanyServiceFacade;
 
 	@Operation(summary = "동행글 생성")
 	@PostMapping
 	public ResponseEntity<CreateAccompanyBoardResponse> create(
 		@AuthenticationPrincipal JwtAuthentication user,
 		@RequestBody @Valid CreateAccompanyBoardRequest request) {
-		return ResponseEntity.ok(accompanyBoardService.create(user.getId(), request));
+		return ResponseEntity.ok(accompanyServiceFacade.createBoard(user.getId(), request));
 	}
 
 	@Operation(summary = "동행글 목록 조회")
@@ -54,13 +56,13 @@ public class AccompanyBoardController {
 			sort = {"updatedAt", "createdAt"},
 			direction = Sort.Direction.DESC) Pageable pageable,
 		@RequestParam(value = "region", required = false) Region region) {
-		return ResponseEntity.ok(accompanyBoardService.readAll(pageable, region));
+		return ResponseEntity.ok(accompanyBoardService.getAllBoards(pageable, region));
 	}
 
 	@Operation(summary = "동행글 상세 조회")
 	@GetMapping("/{id}")
 	public ResponseEntity<ReadAccompanyBoardResponse> read(@PathVariable Long id) {
-		return ResponseEntity.ok(accompanyBoardService.read(id));
+		return ResponseEntity.ok(accompanyServiceFacade.getBoardDetail(id));
 	}
 
 	@Operation(summary = "동행 신청")
@@ -77,7 +79,7 @@ public class AccompanyBoardController {
 	public ResponseEntity<Void> delete(
 		@AuthenticationPrincipal JwtAuthentication user,
 		@PathVariable Long id) {
-		accompanyBoardService.delete(user.getId(), id);
+		accompanyServiceFacade.deleteBoard(user.getId(), id);
 		return ResponseEntity.ok().build();
 	}
 }

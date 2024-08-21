@@ -5,7 +5,6 @@ import static com.dnd.accompany.domain.accompany.entity.QAccompanyImage.*;
 import static com.dnd.accompany.domain.accompany.entity.QAccompanyUser.*;
 import static com.dnd.accompany.domain.accompany.entity.enums.Role.*;
 import static com.dnd.accompany.domain.user.entity.QUser.*;
-import static com.dnd.accompany.domain.user.entity.QUserProfile.*;
 
 import java.util.List;
 import java.util.Optional;
@@ -16,7 +15,6 @@ import org.springframework.data.domain.SliceImpl;
 import org.springframework.stereotype.Repository;
 
 import com.dnd.accompany.domain.accompany.api.dto.FindBoardThumbnailsResult;
-import com.dnd.accompany.domain.accompany.api.dto.UserProfileThumbnail;
 import com.dnd.accompany.domain.accompany.entity.enums.Region;
 import com.dnd.accompany.domain.accompany.infrastructure.querydsl.interfaces.AccompanyBoardRepositoryCustom;
 import com.querydsl.core.BooleanBuilder;
@@ -78,29 +76,6 @@ public class AccompanyBoardRepositoryImpl implements AccompanyBoardRepositoryCus
 		}
 
 		return new SliceImpl<>(content, pageable, hasNext);
-	}
-
-	@Override
-	public Optional<UserProfileThumbnail> findUserProfileThumbnail(Long userId) {
-		return Optional.of(queryFactory
-			.select(Projections.constructor(UserProfileThumbnail.class,
-				user.id,
-				user.nickname,
-				user.profileImageUrl,
-				userProfile.birthYear,
-				userProfile.gender
-			))
-			.from(user)
-			.leftJoin(userProfile).on(userProfile.userId.eq(user.id))
-			.where(user.id.eq(userId))
-			.groupBy(
-				user.id,
-				user.nickname,
-				user.profileImageUrl,
-				userProfile.birthYear,
-				userProfile.gender
-			)
-			.fetchOne());
 	}
 
 	@Override

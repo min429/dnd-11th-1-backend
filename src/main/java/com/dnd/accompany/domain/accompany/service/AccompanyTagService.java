@@ -29,7 +29,7 @@ public class AccompanyTagService {
 	}
 
 	@Transactional(readOnly = true)
-	public List<String> findTagNamesByAccompanyBoardId(Long boardId) {
+	public List<String> getTagNames(Long boardId) {
 		return accompanyTagRepository.findNamesByAccompanyBoardId(boardId);
 	}
 
