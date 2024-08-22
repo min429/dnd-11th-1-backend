@@ -13,7 +13,7 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class SendedAccompany {
-	private Long boardId;
+	private Long requestId;
 	private String title;
 	private Region region;
 	private LocalDateTime startDate;
@@ -22,9 +22,9 @@ public class SendedAccompany {
 	private List<String> imageUrls;
 
 	@Builder
-	public SendedAccompany(Long boardId, String title, Region region, LocalDateTime startDate, LocalDateTime endDate,
+	public SendedAccompany(Long requestId, String title, Region region, LocalDateTime startDate, LocalDateTime endDate,
         String nickname, List<String> imageUrls) {
-		this.boardId = boardId;
+		this.requestId = requestId;
 		this.title = title;
 		this.region = region;
 		this.startDate = startDate;

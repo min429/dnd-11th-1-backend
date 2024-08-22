@@ -54,7 +54,7 @@ public class AccompanyRequestService {
 	private static List<SendedAccompany> getSendedAccompany(List<FindBoardThumbnailsResult> results) {
 		List<SendedAccompany> sendedAccompanies = results.stream()
 			.map(result -> SendedAccompany.builder()
-				.boardId(result.boardId())
+				.requestId(result.requestId())
 				.title(result.title())
 				.region(result.region())
 				.startDate(result.startDate())

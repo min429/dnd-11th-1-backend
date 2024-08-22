@@ -9,7 +9,7 @@ import java.util.List;
 import com.dnd.accompany.domain.accompany.entity.enums.Region;
 
 public record FindBoardThumbnailsResult(
-	Long boardId,
+	Long requestId,
 	String title,
 	Region region,
 	LocalDateTime startDate,

@@ -62,7 +62,7 @@ public class AccompanyBoardService {
 	private List<AccompanyBoardThumbnail> getBoardThumbnails(List<FindBoardThumbnailsResult> results) {
 		List<AccompanyBoardThumbnail> thumbnails = results.stream()
 			.map(result -> AccompanyBoardThumbnail.builder()
-				.boardId(result.boardId())
+				.boardId(result.requestId())
 				.title(result.title())
 				.region(result.region())
 				.startDate(result.startDate())

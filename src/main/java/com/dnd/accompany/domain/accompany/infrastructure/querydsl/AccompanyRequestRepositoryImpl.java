@@ -38,7 +38,7 @@ public class AccompanyRequestRepositoryImpl implements AccompanyRequestRepositor
 	public Slice<FindBoardThumbnailsResult> findBoardThumbnails(Pageable pageable, Long applicantId) {
 		List<FindBoardThumbnailsResult> content = queryFactory
 			.select(Projections.constructor(FindBoardThumbnailsResult.class,
-				accompanyBoard.id,
+				accompanyRequest.id,
 				accompanyBoard.title,
 				accompanyBoard.region,
 				accompanyBoard.startDate,
@@ -53,7 +53,7 @@ public class AccompanyRequestRepositoryImpl implements AccompanyRequestRepositor
 			.where(isHost())
 			.where(accompanyRequest.user.id.eq(applicantId))
 			.where(accompanyRequest.requestState.eq(HOLDING))
-			.groupBy(accompanyBoard.id, accompanyBoard.title, accompanyBoard.region,
+			.groupBy(accompanyRequest.id, accompanyBoard.title, accompanyBoard.region,
 				accompanyBoard.startDate, accompanyBoard.endDate, user.nickname)
 			.orderBy(accompanyBoard.updatedAt.desc(), accompanyBoard.createdAt.desc())
 			.offset(pageable.getOffset())
