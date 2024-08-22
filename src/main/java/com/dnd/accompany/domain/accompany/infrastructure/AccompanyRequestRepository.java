@@ -13,4 +13,10 @@ public interface AccompanyRequestRepository extends JpaRepository<AccompanyReque
 
 	@Query("SELECT r FROM AccompanyRequest r WHERE r.accompanyBoard.id = :boardId AND r.user.id = :userId")
 	Optional<AccompanyRequest> findRequestDetailInfo(Long boardId, Long userId);
+
+	@Query("SELECT r.user.id FROM AccompanyRequest r JOIN r.user WHERE r.id = :requestId")
+	Optional<Long> findUserId(Long requestId);
+
+	@Query("SELECT r.accompanyBoard.id FROM AccompanyRequest r JOIN r.accompanyBoard WHERE r.id = :requestId")
+	Optional<Long> findBoardId(Long requestId);
 }

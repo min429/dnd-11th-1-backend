@@ -54,10 +54,8 @@ public class AccompanyRequestController {
 	@Operation(summary = "동행 신청서 조회")
 	@GetMapping("/{id}")
 	public ResponseEntity<ReadAccompanyResponse> read(
-		@PathVariable(name = "id") Long boardId,
-		@AuthenticationPrincipal JwtAuthentication user,
-		@Parameter(name = "applicantId", description = "조회를 요청하는 클라이언트가 게시글 작성자인 경우에만 필요합니다.", in = ParameterIn.QUERY)
-		@RequestParam(value = "applicantId", required = false) Long applicantId) {
-		return ResponseEntity.ok(accompanyServiceFacade.getRequestDetail(boardId, user.getId(), applicantId));
+		@PathVariable(name = "id") Long requestId,
+		@AuthenticationPrincipal JwtAuthentication user) {
+		return ResponseEntity.ok(accompanyServiceFacade.getRequestDetail(requestId, user.getId()));
 	}
 }

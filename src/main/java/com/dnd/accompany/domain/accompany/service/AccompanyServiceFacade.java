@@ -97,22 +97,24 @@ public class AccompanyServiceFacade {
 	}
 
 	@Transactional(readOnly = true)
-	public ReadAccompanyResponse getRequestDetail(Long boardId, Long userId, Long applicantId) {
+	public ReadAccompanyResponse getRequestDetail(Long requestId, Long userId) {
+		Long boardId = accompanyRequestService.getBoardId(requestId);
 		Long hostId = accompanyUserService.getHostIdByAccompanyBoardId(boardId);
 		AccompanyBoardThumbnail boardThumbnail = getBoardThumbnail(boardId, hostId);
+
+		Long applicantId = accompanyRequestService.getApplicantId(requestId);
+		boolean isReceived = userId != applicantId;
 
 		UserProfileDetailResponse profileDetailInfo;
 		AccompanyRequestDetailInfo requestDetailInfo;
 
-		if(applicantId == null){
-			profileDetailInfo = getUserProfileDetailInfo(hostId);
-
-			requestDetailInfo = accompanyRequestService.getRequestDetailInfo(boardId, userId);
-		}
-		else{
+		if (isReceived) {
 			profileDetailInfo = getUserProfileDetailInfo(applicantId);
-			requestDetailInfo = accompanyRequestService.getRequestDetailInfo(boardId, applicantId);
+		} else {
+			profileDetailInfo = getUserProfileDetailInfo(hostId);
 		}
+
+		requestDetailInfo = accompanyRequestService.getRequestDetailInfo(boardId, applicantId);
 
 		return new ReadAccompanyResponse(boardThumbnail, profileDetailInfo, requestDetailInfo);
 	}
