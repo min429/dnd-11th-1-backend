@@ -3,6 +3,7 @@ package com.dnd.accompany.domain.accompany.api.dto;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import com.dnd.accompany.domain.accompany.entity.enums.BoardStatus;
 import com.dnd.accompany.domain.accompany.entity.enums.Category;
 import com.dnd.accompany.domain.accompany.entity.enums.PreferredAge;
 import com.dnd.accompany.domain.accompany.entity.enums.PreferredGender;
@@ -19,6 +20,7 @@ public record CreateAccompanyBoardRequest(
 	@NotNull LocalDateTime startDate,
 	@NotNull LocalDateTime endDate,
 	@NotNull Long capacity,
+	@NotNull BoardStatus boardStatus,
 	@NotEmpty List<Category> categories,
 	@NotNull PreferredAge preferredAge,
 	@NotNull PreferredGender preferredGender,

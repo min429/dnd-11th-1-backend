@@ -40,6 +40,7 @@ public class AccompanyBoardService {
 				.endDate(request.endDate())
 				.headCount(1L)
 				.capacity(request.capacity())
+				.boardStatus(request.boardStatus())
 				.categories(request.categories())
 				.preferredAge(request.preferredAge())
 				.preferredGender(request.preferredGender())
