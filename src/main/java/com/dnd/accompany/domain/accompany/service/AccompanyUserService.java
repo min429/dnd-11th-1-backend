@@ -1,7 +1,5 @@
 package com.dnd.accompany.domain.accompany.service;
 
-import java.util.Optional;
-
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -9,7 +7,6 @@ import com.dnd.accompany.domain.accompany.api.dto.UserProfileThumbnail;
 import com.dnd.accompany.domain.accompany.entity.AccompanyBoard;
 import com.dnd.accompany.domain.accompany.entity.AccompanyUser;
 import com.dnd.accompany.domain.accompany.entity.enums.Role;
-import com.dnd.accompany.domain.accompany.infrastructure.AccompanyBoardRepository;
 import com.dnd.accompany.domain.accompany.infrastructure.AccompanyUserRepository;
 import com.dnd.accompany.domain.user.entity.User;
 import com.dnd.accompany.domain.user.exception.UserNotFoundException;
@@ -53,6 +50,7 @@ public class AccompanyUserService {
 		accompanyUserRepository.deleteByAccompanyBoardId(boardId);
 	}
 
+	@Transactional(readOnly = true)
 	public String getNickname(Long userId){
 		return accompanyUserRepository.findNickname(userId)
 			.orElseThrow(() -> new UserNotFoundException(ErrorCode.USER_NOT_FOUND));

@@ -7,7 +7,6 @@ import static com.dnd.accompany.domain.accompany.entity.enums.Role.*;
 import static com.dnd.accompany.domain.user.entity.QUser.*;
 
 import java.util.List;
-import java.util.Optional;
 
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
@@ -64,6 +63,39 @@ public class AccompanyBoardRepositoryImpl implements AccompanyBoardRepositoryCus
 			.groupBy(accompanyBoard.id, accompanyBoard.title, accompanyBoard.region,
 				accompanyBoard.startDate, accompanyBoard.endDate, user.nickname)
 			.orderBy(accompanyBoard.updatedAt.desc(), accompanyBoard.createdAt.desc())
+			.offset(pageable.getOffset())
+			.limit(pageable.getPageSize() + 1)
+			.fetch();
+
+		boolean hasNext = content.size() > pageable.getPageSize();
+
+		if (hasNext) {
+			content.remove(content.size() - 1);
+		}
+
+		return new SliceImpl<>(content, pageable, hasNext);
+	}
+
+	@Override
+	public Slice<FindBoardThumbnailsResult> findBoardThumbnailsByUserId(Pageable pageable, Long userId) {
+		List<FindBoardThumbnailsResult> content = queryFactory
+			.select(Projections.constructor(FindBoardThumbnailsResult.class,
+				accompanyBoard.id,
+				accompanyBoard.title,
+				accompanyBoard.region,
+				accompanyBoard.startDate,
+				accompanyBoard.endDate,
+				user.nickname,
+				Expressions.stringTemplate("GROUP_CONCAT(DISTINCT {0})", accompanyImage.imageUrl)))
+			.from(accompanyUser)
+			.join(accompanyUser.accompanyBoard, accompanyBoard)
+			.join(accompanyUser.user, user)
+			.leftJoin(accompanyImage).on(accompanyImage.accompanyBoard.id.eq(accompanyBoard.id))
+			.where(accompanyUser.user.id.eq(userId))
+			.groupBy(accompanyBoard.id, accompanyBoard.title, accompanyBoard.region,
+				accompanyBoard.startDate, accompanyBoard.endDate, user.nickname,
+				accompanyUser.id)
+			.orderBy(accompanyUser.createdAt.desc())
 			.offset(pageable.getOffset())
 			.limit(pageable.getPageSize() + 1)
 			.fetch();

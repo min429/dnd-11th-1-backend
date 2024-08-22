@@ -4,6 +4,7 @@ import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.SQLRestriction;
 
 import com.dnd.accompany.domain.accompany.entity.enums.Role;
+import com.dnd.accompany.domain.common.entity.TimeBaseEntity;
 import com.dnd.accompany.domain.user.entity.User;
 
 import jakarta.persistence.Column;
@@ -34,7 +35,7 @@ import lombok.NoArgsConstructor;
 })
 @SQLRestriction("deleted = false")
 @SQLDelete(sql = "UPDATE accompany_users SET deleted = true WHERE id = ?")
-public class AccompanyUser {
+public class AccompanyUser extends TimeBaseEntity {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)

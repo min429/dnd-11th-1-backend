@@ -15,5 +15,4 @@ public interface AccompanyBoardRepository extends JpaRepository<AccompanyBoard, 
 
 	@Query("SELECT new com.dnd.accompany.domain.accompany.api.dto.FindBoardThumbnailResult(b.id, b.title, b.region, b.startDate, b.endDate) FROM AccompanyBoard b WHERE b.id = :boardId")
 	Optional<FindBoardThumbnailResult> findBoardThumbnail(Long boardId);
-
 }

@@ -3,6 +3,7 @@ package com.dnd.accompany.domain.accompany.service;
 import static com.dnd.accompany.domain.accompany.entity.AccompanyBoard.*;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
@@ -18,7 +19,6 @@ import com.dnd.accompany.domain.accompany.entity.AccompanyBoard;
 import com.dnd.accompany.domain.accompany.entity.enums.Region;
 import com.dnd.accompany.domain.accompany.exception.accompanyboard.AccompanyBoardNotFoundException;
 import com.dnd.accompany.domain.accompany.infrastructure.AccompanyBoardRepository;
-import com.dnd.accompany.domain.user.exception.UserNotFoundException;
 import com.dnd.accompany.global.common.response.ErrorCode;
 
 import lombok.RequiredArgsConstructor;
@@ -56,6 +56,16 @@ public class AccompanyBoardService {
 		return new PageResponse<>(sliceResult.hasNext(), thumbnails);
 	}
 
+	@Transactional(readOnly = true)
+	public PageResponse<AccompanyBoardThumbnail> getAllRecords(Pageable pageable, Long userId) {
+		Slice<FindBoardThumbnailsResult> sliceResult = accompanyBoardRepository.findBoardThumbnailsByUserId(pageable, userId);
+
+		List<AccompanyBoardThumbnail> thumbnails = getBoardThumbnails(sliceResult.getContent());
+
+		return new PageResponse<>(sliceResult.hasNext(), thumbnails);
+	}
+
+
 	/**
 	 * imageUrls의 타입을 String -> List<String>로 변환합니다.
 	 */
@@ -83,6 +93,12 @@ public class AccompanyBoardService {
 	@Transactional(readOnly = true)
 	public boolean isHostOfBoard(Long userId, Long boardId){
 		return accompanyBoardRepository.isHostOfBoard(userId, boardId);
+	}
+
+	@Transactional(readOnly = true)
+	public AccompanyBoard getById(Long boardId){
+		return accompanyBoardRepository.findById(boardId)
+			.orElseThrow(() -> new AccompanyBoardNotFoundException(ErrorCode.ACCOMPANY_BOARD_NOT_FOUND));
 	}
 
 	@Transactional

@@ -65,6 +65,15 @@ public class AccompanyServiceFacade {
 	}
 
 	@Transactional
+	public void removeBoard(Long userId, Long boardId) {
+		if (accompanyBoardService.isHostOfBoard(userId, boardId)) {
+			accompanyBoardService.getById(boardId).remove();
+		} else {
+			throw new AccompanyBoardAccessDeniedException(ErrorCode.ACCOMPANY_BOARD_ACCESS_DENIED);
+		}
+	}
+
+	@Transactional
 	public void deleteBoard(Long userId, Long boardId) {
 		if (accompanyBoardService.isHostOfBoard(userId, boardId)) {
 			accompanyImageService.deleteByBoardId(boardId);

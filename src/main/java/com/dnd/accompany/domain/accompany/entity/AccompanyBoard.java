@@ -1,5 +1,7 @@
 package com.dnd.accompany.domain.accompany.entity;
 
+import static com.dnd.accompany.domain.accompany.entity.enums.BoardStatus.*;
+
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -7,6 +9,7 @@ import java.util.List;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.SQLRestriction;
 
+import com.dnd.accompany.domain.accompany.entity.enums.BoardStatus;
 import com.dnd.accompany.domain.accompany.entity.enums.Category;
 import com.dnd.accompany.domain.accompany.entity.enums.PreferredAge;
 import com.dnd.accompany.domain.accompany.entity.enums.PreferredGender;
@@ -67,6 +70,10 @@ public class AccompanyBoard extends TimeBaseEntity {
 	@Column(nullable = false)
 	private Long capacity;
 
+	@Enumerated(EnumType.STRING)
+	@Column(nullable = false)
+	private BoardStatus boardStatus;
+
 	@Builder.Default
 	@ElementCollection(targetClass = Category.class)
 	@Enumerated(EnumType.STRING)
@@ -81,4 +88,8 @@ public class AccompanyBoard extends TimeBaseEntity {
 	private PreferredGender preferredGender;
 
 	private boolean deleted = Boolean.FALSE;
+
+	public void remove(){
+		this.boardStatus = REMOVED;
+	}
 }
