@@ -1,5 +1,8 @@
 package com.dnd.accompany.domain.review.entity.enums;
 
+import io.swagger.v3.oas.annotations.media.Schema;
+
+@Schema(description = "Travel style", example = "LIKE_RESTAURANTS", allowableValues = {"LIKE_RESTAURANTS", "DOES_NOT_HAVE_TO_BE_RESTAURANT", "PREFER_HOTPLE", "LIKE_QUIET_PLACES", "LIKE_TAKING_PICTURES", "PREFER_TOURIST_DESTINATIONS", "PREFER_HEALING", "ENJOY_ACTIVITY", "LIKE_SHOPPING", "LIKE_CAFES"})
 public enum TravelStyle {
     LIKE_RESTAURANTS("맛집을 좋아합니다"),
     DOES_NOT_HAVE_TO_BE_RESTAURANT("맛집이 아니어도 괜찮습니다"),

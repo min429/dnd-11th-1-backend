@@ -1,5 +1,8 @@
 package com.dnd.accompany.domain.review.entity.enums;
 
+import io.swagger.v3.oas.annotations.media.Schema;
+
+@Schema(description = "Travel preference", example = "PLANNED", allowableValues = {"PLANNED", "SPONTANEOUS", "PUBLIC_MONEY_CONVENIENT", "DUTCH_PAY", "DILIGENT", "RELAXED"})
 public enum TravelPreference {
     PLANNED("계획적입니다"),
     SPONTANEOUS("즉흥적입니다"),

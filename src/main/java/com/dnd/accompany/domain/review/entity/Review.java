@@ -49,9 +49,6 @@ public class Review extends TimeBaseEntity {
     private Long writerId;
 
     @Column(nullable = false)
-    private Long userId;
-
-    @Column(nullable = false)
     private Long accompanyBoardId;
 
     @Column(nullable = false)
@@ -85,7 +82,27 @@ public class Review extends TimeBaseEntity {
     private String detailContent;
 
     @Column(length = 1000)
-    private String reviewImageUrl;
+    @ElementCollection
+    private List<String> reviewImageUrls = new ArrayList<>();
 
     private boolean deleted = Boolean.FALSE;
+
+    public static Review of(Long writerId, Long accompanyBoardId,
+                                      SatisfactionLevel satisfactionLevel, RecommendationStatus recommendationStatus,
+                                      CompanionType companionType, List<PersonalityType> personalityType,
+                                      List<TravelPreference> travelPreference, List<TravelStyle> travelStyle,
+                                      String detailContent, List<String> reviewImageUrls) {
+        return Review.builder()
+                .writerId(writerId)
+                .accompanyBoardId(accompanyBoardId)
+                .satisfactionLevel(satisfactionLevel)
+                .recommendationStatus(recommendationStatus)
+                .companionType(companionType)
+                .personalityType(personalityType)
+                .travelPreference(travelPreference)
+                .travelStyle(travelStyle)
+                .detailContent(detailContent)
+                .reviewImageUrls(reviewImageUrls)
+                .build();
+    }
 }
