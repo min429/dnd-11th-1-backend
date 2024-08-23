@@ -55,8 +55,8 @@ public class AccompanyRequestRepositoryImpl implements AccompanyRequestRepositor
 			.where(isHost())
 			.where(accompanyRequest.user.id.eq(applicantId))
 			.where(accompanyRequest.requestState.eq(HOLDING))
-			.groupBy(accompanyBoard.id, accompanyBoard.title, accompanyBoard.region, accompanyBoard.startDate,
-				accompanyBoard.endDate, user.nickname, accompanyRequest.updatedAt, accompanyRequest.createdAt)
+			.groupBy(accompanyRequest.id, accompanyBoard.title, accompanyBoard.region, accompanyBoard.startDate,
+				accompanyBoard.endDate, user.nickname)
 			.orderBy(accompanyRequest.updatedAt.desc(), accompanyRequest.createdAt.desc())
 			.offset(pageable.getOffset())
 			.limit(pageable.getPageSize() + 1)
@@ -90,7 +90,7 @@ public class AccompanyRequestRepositoryImpl implements AccompanyRequestRepositor
 			.where(accompanyUser.user.id.eq(hostId))
 			.where(accompanyRequest.requestState.eq(HOLDING))
 			.groupBy(accompanyRequest.id, user.id, user.nickname, user.provider,
-				user.profileImageUrl, accompanyRequest.updatedAt, accompanyRequest.createdAt)
+				user.profileImageUrl)
 			.orderBy(accompanyRequest.updatedAt.desc(), accompanyRequest.createdAt.desc())
 			.offset(pageable.getOffset())
 			.limit(pageable.getPageSize() + 1)
