@@ -40,7 +40,10 @@ public enum ErrorCode {
 
 	// ---- 이미지 ---- //
 	IMAGE_NOT_EXISTS(MatripConstant.NOT_FOUND, "IMAGE-001", "이미지를 찾을 수 없습니다."),
-	FILE_IO_EXCEPTION(MatripConstant.INTERNAL_SERVER_ERROR, "IMAGE-002", "파일 생성에 실패했습니다.");
+	FILE_IO_EXCEPTION(MatripConstant.INTERNAL_SERVER_ERROR, "IMAGE-002", "파일 생성에 실패했습니다."),
+
+	// ---- 리뷰 ---- //
+	REVIEW_NOT_FOUND(MatripConstant.NOT_FOUND, "REVIEW-001", "존재하지 않는 리뷰입니다.");
 
 	private final Integer status;
 	private final String code;
