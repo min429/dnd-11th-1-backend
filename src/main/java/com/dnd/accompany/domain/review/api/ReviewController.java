@@ -4,7 +4,8 @@ import com.dnd.accompany.domain.auth.dto.jwt.JwtAuthentication;
 import com.dnd.accompany.domain.review.api.dto.CreateReviewRequest;
 import com.dnd.accompany.domain.review.api.dto.ReviewDetailsResponse;
 import com.dnd.accompany.domain.review.api.dto.ReviewDetailsResult;
-import com.dnd.accompany.domain.review.api.dto.SimpleReviewResponse;
+import com.dnd.accompany.domain.review.api.dto.SimpleEvaluationResponse;
+import com.dnd.accompany.domain.review.api.dto.SimpleReviewResponses;
 import com.dnd.accompany.domain.review.service.ReviewService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -18,8 +19,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
-import java.util.List;
 
 @Tag(name = "Review")
 @RestController
@@ -52,12 +51,21 @@ public class ReviewController {
         return ResponseEntity.ok(response);
     }
 
-    @Operation(summary = "받은 리뷰 목록 조회")
+    @Operation(summary = "받은 동행 후기 조회")
     @GetMapping
-    public ResponseEntity<List<SimpleReviewResponse>> getReviewList(
+    public ResponseEntity<SimpleReviewResponses> getReviewList(
             @AuthenticationPrincipal JwtAuthentication user
     ) {
-        List<SimpleReviewResponse> responses = reviewService.getReviewList(user.getId());
-        return ResponseEntity.ok(responses);
+        SimpleReviewResponses reviewList = reviewService.getReviewList(user.getId());
+        return ResponseEntity.ok(reviewList);
+    }
+
+    @Operation(summary = "받은 동행 평가 조회")
+    @GetMapping("/evaluations")
+    public ResponseEntity<SimpleEvaluationResponse> getEvaluation(
+            @AuthenticationPrincipal JwtAuthentication user
+    ) {
+        SimpleEvaluationResponse response = reviewService.getEvaluation(user.getId());
+        return ResponseEntity.ok(response);
     }
 }

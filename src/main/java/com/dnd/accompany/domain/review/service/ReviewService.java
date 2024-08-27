@@ -4,7 +4,9 @@ import com.dnd.accompany.domain.accompany.entity.AccompanyBoard;
 import com.dnd.accompany.domain.accompany.infrastructure.AccompanyBoardRepository;
 import com.dnd.accompany.domain.review.api.dto.CreateReviewRequest;
 import com.dnd.accompany.domain.review.api.dto.ReviewDetailsResult;
-import com.dnd.accompany.domain.review.api.dto.SimpleReviewResponse;
+import com.dnd.accompany.domain.review.api.dto.SimpleEvaluationResponse;
+import com.dnd.accompany.domain.review.api.dto.SimpleEvaluationResult;
+import com.dnd.accompany.domain.review.api.dto.SimpleReviewResponses;
 import com.dnd.accompany.domain.review.api.dto.SimpleReviewResult;
 import com.dnd.accompany.domain.review.entity.Review;
 import com.dnd.accompany.domain.review.infrastructure.ReviewRepository;
@@ -29,13 +31,13 @@ public class ReviewService {
 
     @Transactional
     public Long create(Long userId, CreateReviewRequest request) {
-        getWriter(userId);
+        User receiver = getUser(request.receiverId());
 
         getAccompanyBoard(request.accompanyBoardId());
 
         Review review = Review.createReview(
                 userId,
-                request.receiverId(),
+                receiver,
                 request.accompanyBoardId(),
                 request.satisfactionLevel(),
                 request.recommendationStatus(),
@@ -58,27 +60,18 @@ public class ReviewService {
 
         validateReceiver(userId, review);
 
-        User writer = getWriter(review.getWriterId());
+        User writer = getUser(review.getWriterId());
         AccompanyBoard accompanyBoard = getAccompanyBoard(review.getAccompanyBoardId());
 
         return ReviewDetailsResult.of(writer, review, accompanyBoard);
     }
 
     @Transactional(readOnly = true)
-    public List<SimpleReviewResponse> getReviewList(Long userId) {
+    public SimpleReviewResponses getReviewList(Long userId) {
         List<SimpleReviewResult> results = reviewRepository.findAllByReceiverId(userId);
+        int totalCount = results.size();
 
-        return results.stream()
-                .map(result -> SimpleReviewResponse.builder()
-                        .nickname(result.getNickname())
-                        .profileImageUrl(result.getProfileImageUrl())
-                        .detailContent(result.getDetailContent())
-                        .region(result.getRegion())
-                        .startDate(result.getStartDate())
-                        .endDate(result.getEndDate())
-                        .build()
-                )
-                .toList();
+        return new SimpleReviewResponses(results, totalCount);
     }
 
     private Review getReview(Long reviewId) {
@@ -86,7 +79,7 @@ public class ReviewService {
                 .orElseThrow(() -> new NotFoundException(ErrorCode.REVIEW_NOT_FOUND));
     }
 
-    private User getWriter(Long userId) {
+    private User getUser(Long userId) {
         return userRepository.findById(userId)
                 .orElseThrow(() -> new NotFoundException(ErrorCode.USER_NOT_FOUND));
     }
@@ -97,8 +90,20 @@ public class ReviewService {
     }
 
     private void validateReceiver(Long userId, Review review) {
-        if (!userId.equals(review.getReceiverId())) {
+        if (!review.isReceiver(userId)) {
             throw new BadRequestException(ErrorCode.ACCESS_DENIED);
         }
+    }
+
+    public SimpleEvaluationResponse getEvaluation(Long userId) {
+        User receiver = getUser(userId);
+        SimpleEvaluationResult result = reviewRepository.findEvaluationsByReceiverId(userId);
+
+        return SimpleEvaluationResponse.builder()
+                .personalityType(result.getPersonalityType())
+                .travelPreference(result.getTravelPreference())
+                .travelStyle(result.getTravelStyle())
+                .evaluationCount(receiver.getEvaluationCount())
+                .build();
     }
 }

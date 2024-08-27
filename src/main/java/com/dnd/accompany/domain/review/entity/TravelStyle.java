@@ -8,6 +8,7 @@ import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
+import jakarta.persistence.Index;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
@@ -26,7 +27,9 @@ import static jakarta.persistence.GenerationType.IDENTITY;
 @Entity
 @AllArgsConstructor(access = AccessLevel.PROTECTED)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@Table(name = "review_travel_style")
+@Table(name = "review_travel_style", indexes = {
+        @Index(name = "idx_review_travel_style_type", columnList = "type")
+})
 @SQLRestriction("deleted = false")
 @SQLDelete(sql = "UPDATE travel_style SET deleted = true WHERE id = ?")
 public class TravelStyle extends TimeBaseEntity {

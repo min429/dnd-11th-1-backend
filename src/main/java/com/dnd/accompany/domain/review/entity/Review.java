@@ -7,6 +7,7 @@ import com.dnd.accompany.domain.review.entity.enums.RecommendationStatus;
 import com.dnd.accompany.domain.review.entity.enums.SatisfactionLevel;
 import com.dnd.accompany.domain.review.entity.enums.TravelPreferenceType;
 import com.dnd.accompany.domain.review.entity.enums.TravelStyleType;
+import com.dnd.accompany.domain.user.entity.User;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -14,6 +15,8 @@ import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import lombok.AccessLevel;
@@ -44,8 +47,9 @@ public class Review extends TimeBaseEntity {
     @GeneratedValue(strategy = IDENTITY)
     private Long id;
 
-    @Column(nullable = false)
-    private Long receiverId;
+    @ManyToOne
+    @JoinColumn(name = "receiver_id")
+    private User receiver;
 
     @Column(nullable = false)
     private Long writerId;
@@ -82,14 +86,14 @@ public class Review extends TimeBaseEntity {
 
     private boolean deleted = Boolean.FALSE;
 
-    public static Review createReview(Long writerId, Long receiverId, Long accompanyBoardId,
+    public static Review createReview(Long writerId, User receiver, Long accompanyBoardId,
                                       SatisfactionLevel satisfactionLevel, RecommendationStatus recommendationStatus,
                                       CompanionType companionType, List<PersonalityType> personalityTypes,
                                       List<TravelPreferenceType> travelPreferences, List<TravelStyleType> travelStyles,
                                       String detailContent, List<String> reviewImageUrls) {
         Review review = Review.builder()
                 .writerId(writerId)
-                .receiverId(receiverId)
+                .receiver(receiver)
                 .accompanyBoardId(accompanyBoardId)
                 .satisfactionLevel(satisfactionLevel)
                 .recommendationStatus(recommendationStatus)
@@ -102,6 +106,9 @@ public class Review extends TimeBaseEntity {
         review.addTravelStyles(travelStyles);
         review.addReviewImages(reviewImageUrls);
 
+        int totalEvaluations = personalityTypes.size() + travelPreferences.size() + travelStyles.size();
+        receiver.addEvaluationCount(totalEvaluations);
+        
         return review;
     }
 
@@ -147,5 +154,9 @@ public class Review extends TimeBaseEntity {
                 .toList();
 
         this.reviewImageUrls.addAll(images);
+    }
+
+    public boolean isReceiver(Long userId) {
+        return this.receiver.getId().equals(userId);
     }
 }

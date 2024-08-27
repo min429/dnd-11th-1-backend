@@ -49,6 +49,8 @@ public class User extends TimeBaseEntity {
 	@Column(length = 1000)
 	private String profileImageUrl;
 
+	private int evaluationCount;
+
 	private boolean deleted = false;
 
 	public static User of(String nickname, String provider, String oauthId, String profileImageUrl) {
@@ -65,5 +67,9 @@ public class User extends TimeBaseEntity {
 
 		this.nickname = nickname;
 		this.profileImageUrl = profileImageUrl;
+	}
+
+	public void addEvaluationCount(int count) {
+		this.evaluationCount += count;
 	}
 }
