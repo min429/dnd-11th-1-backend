@@ -1,9 +1,9 @@
 package com.dnd.accompany.domain.accompany.service;
 
+import static com.dnd.accompany.domain.accompany.api.dto.FindApplicantDetailsResult.*;
 import static com.dnd.accompany.domain.accompany.entity.enums.RequestState.*;
 import static java.util.stream.Collectors.*;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -18,6 +18,8 @@ import com.dnd.accompany.domain.accompany.api.dto.AccompanyRequestDetailInfo;
 import com.dnd.accompany.domain.accompany.api.dto.CreateAccompanyRequest;
 import com.dnd.accompany.domain.accompany.api.dto.FindBoardThumbnailsResult;
 import com.dnd.accompany.domain.accompany.api.dto.FindApplicantDetailsResult;
+import com.dnd.accompany.domain.accompany.api.dto.FindSlicesResult;
+import com.dnd.accompany.domain.accompany.api.dto.PageRequest;
 import com.dnd.accompany.domain.accompany.api.dto.PageResponse;
 import com.dnd.accompany.domain.accompany.api.dto.ReceivedAccompany;
 import com.dnd.accompany.domain.accompany.api.dto.SendedAccompany;
@@ -52,20 +54,20 @@ public class AccompanyRequestService {
 	}
 
 	@Transactional(readOnly = true)
-	public PageResponse<ReceivedAccompany> getAllReceivedAccompanies(Pageable pageable, Long hostId){
-		Slice<FindApplicantDetailsResult> sliceResult = accompanyRequestRepository.findApplicantDetails(pageable, hostId);
+	public PageResponse<ReceivedAccompany> getAllReceivedAccompanies(PageRequest request, Long hostId){
+		Slice<FindApplicantDetailsResult> sliceResult = accompanyRequestRepository.findApplicantDetails(request.cursor(), request.size(), hostId);
 
 		Set<Long> userIds = getUserIds(sliceResult);
 		Map<Long, UserProfile> userProfileMap = getUserProfileMap(userIds);
 
 		List<ReceivedAccompany> receivedAccompanies = getReceivedAccompanies(sliceResult.getContent(), userProfileMap);
 
-		return new PageResponse<>(sliceResult.hasNext(), receivedAccompanies);
+		return new PageResponse<>(sliceResult.hasNext(), receivedAccompanies, FindSlicesResult.getLastCursor(sliceResult.getContent()));
 	}
 
 	private Set<Long> getUserIds(Slice<FindApplicantDetailsResult> results) {
 		return results.getContent().stream()
-			.map(result -> result.userId())
+			.map(result -> result.getUserId())
 			.collect(toSet());
 	}
 
@@ -80,14 +82,14 @@ public class AccompanyRequestService {
 	private static List<ReceivedAccompany> getReceivedAccompanies(List<FindApplicantDetailsResult> results, Map<Long, UserProfile> userProfileMap) {
 		return results.stream()
 			.map(result -> {
-				UserProfile userProfile = userProfileMap.get(result.userId());
+				UserProfile userProfile = userProfileMap.get(result.getUserId());
 
 				return ReceivedAccompany.builder()
-				.requestId(result.requestId())
-				.userId(result.userId())
-				.nickname(result.nickname())
-				.provider(result.provider())
-				.profileImageUrl(result.profileImageUrl())
+				.requestId(result.getRequestId())
+				.userId(result.getUserId())
+				.nickname(result.getNickname())
+				.provider(result.getProvider())
+				.profileImageUrl(result.getProfileImageUrl())
 				.description(userProfile.getDescription())
 				.gender(userProfile.getGender())
 				.birthYear(userProfile.getBirthYear())
@@ -103,12 +105,12 @@ public class AccompanyRequestService {
 	}
 
 	@Transactional(readOnly = true)
-	public PageResponse<SendedAccompany> getAllSendedAccompanies(Pageable pageable, Long applicantId){
-		Slice<FindBoardThumbnailsResult> sliceResult = accompanyRequestRepository.findBoardThumbnails(pageable, applicantId);
+	public PageResponse<SendedAccompany> getAllSendedAccompanies(PageRequest request, Long applicantId){
+		Slice<FindBoardThumbnailsResult> sliceResult = accompanyRequestRepository.findBoardThumbnails(request.cursor(), request.size(), applicantId);
 
 		List<SendedAccompany> sendedAccompanies = getSendedAccompanies(sliceResult.getContent());
 
-		return new PageResponse<>(sliceResult.hasNext(), sendedAccompanies);
+		return new PageResponse<>(sliceResult.hasNext(), sendedAccompanies, getLastCursor(sliceResult.getContent()));
 	}
 
 	/**
@@ -117,12 +119,12 @@ public class AccompanyRequestService {
 	private static List<SendedAccompany> getSendedAccompanies(List<FindBoardThumbnailsResult> results) {
 		List<SendedAccompany> sendedAccompanies = results.stream()
 			.map(result -> SendedAccompany.builder()
-				.requestId(result.requestId())
-				.title(result.title())
-				.region(result.region())
-				.startDate(result.startDate())
-				.endDate(result.endDate())
-				.nickname(result.nickname())
+				.requestId(result.getRequestId())
+				.title(result.getTitle())
+				.region(result.getRegion())
+				.startDate(result.getStartDate())
+				.endDate(result.getEndDate())
+				.nickname(result.getNickname())
 				.imageUrls(result.getImageUrlsAsList())
 				.build())
 			.toList();

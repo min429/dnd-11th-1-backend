@@ -7,7 +7,7 @@ import com.dnd.accompany.domain.accompany.api.dto.FindBoardThumbnailsResult;
 import com.dnd.accompany.domain.accompany.api.dto.FindApplicantDetailsResult;
 
 public interface AccompanyRequestRepositoryCustom {
-	Slice<FindBoardThumbnailsResult> findBoardThumbnails(Pageable pageable, Long applicantId);
+	Slice<FindBoardThumbnailsResult> findBoardThumbnails(String cursor, int size, Long applicantId);
 
-	Slice<FindApplicantDetailsResult> findApplicantDetails(Pageable pageable, Long hostId);
+	Slice<FindApplicantDetailsResult> findApplicantDetails(String cursor, int size, Long hostId);
 }

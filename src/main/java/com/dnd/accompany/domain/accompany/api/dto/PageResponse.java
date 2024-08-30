@@ -4,6 +4,7 @@ import java.util.List;
 
 public record PageResponse<T>(
 	boolean hasNext,
-	List<T> data
+	List<T> data,
+	String cursor
 ) {
 }

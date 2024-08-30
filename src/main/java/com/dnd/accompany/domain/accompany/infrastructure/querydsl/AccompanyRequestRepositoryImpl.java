@@ -1,5 +1,7 @@
 package com.dnd.accompany.domain.accompany.infrastructure.querydsl;
 
+import static com.dnd.accompany.domain.accompany.api.dto.FindSlicesResult.*;
+import static com.dnd.accompany.domain.accompany.api.dto.PageRequest.*;
 import static com.dnd.accompany.domain.accompany.entity.QAccompanyBoard.*;
 import static com.dnd.accompany.domain.accompany.entity.QAccompanyImage.*;
 import static com.dnd.accompany.domain.accompany.entity.QAccompanyRequest.*;
@@ -37,7 +39,7 @@ public class AccompanyRequestRepositoryImpl implements AccompanyRequestRepositor
 	}
 
 	@Override
-	public Slice<FindBoardThumbnailsResult> findBoardThumbnails(Pageable pageable, Long applicantId) {
+	public Slice<FindBoardThumbnailsResult> findBoardThumbnails(String cursor, int size, Long applicantId) {
 		List<FindBoardThumbnailsResult> content = queryFactory
 			.select(Projections.constructor(FindBoardThumbnailsResult.class,
 				accompanyRequest.id,
@@ -46,7 +48,13 @@ public class AccompanyRequestRepositoryImpl implements AccompanyRequestRepositor
 				accompanyBoard.startDate,
 				accompanyBoard.endDate,
 				user.nickname,
-				Expressions.stringTemplate("GROUP_CONCAT(DISTINCT {0})", accompanyImage.imageUrl)))
+				Expressions.stringTemplate("GROUP_CONCAT(DISTINCT {0})", accompanyImage.imageUrl),
+				Expressions.stringTemplate(
+					"CONCAT(DATE_FORMAT({0}, '%Y%m%d%H%i%S'), LPAD(CAST({1} AS STRING), 6, '0'))",
+					accompanyRequest.updatedAt,
+					accompanyRequest.id
+				))
+			)
 			.from(accompanyUser)
 			.join(accompanyUser.accompanyBoard, accompanyBoard)
 			.join(accompanyUser.user, user)
@@ -55,24 +63,18 @@ public class AccompanyRequestRepositoryImpl implements AccompanyRequestRepositor
 			.where(isHost())
 			.where(accompanyRequest.user.id.eq(applicantId))
 			.where(accompanyRequest.requestState.eq(HOLDING))
+			.where(cursorCondition(cursor, accompanyRequest.updatedAt, accompanyRequest.id))
 			.groupBy(accompanyRequest.id, accompanyBoard.title, accompanyBoard.region, accompanyBoard.startDate,
 				accompanyBoard.endDate, user.nickname)
-			.orderBy(accompanyRequest.updatedAt.desc(), accompanyRequest.createdAt.desc())
-			.offset(pageable.getOffset())
-			.limit(pageable.getPageSize() + 1)
+			.orderBy(accompanyRequest.updatedAt.desc(), accompanyRequest.id.desc())
+			.limit(size + 1)
 			.fetch();
 
-		boolean hasNext = content.size() > pageable.getPageSize();
-
-		if (hasNext) {
-			content.remove(content.size() - 1);
-		}
-
-		return new SliceImpl<>(content, pageable, hasNext);
+		return createSlice(size, content);
 	}
 
 	@Override
-	public Slice<FindApplicantDetailsResult> findApplicantDetails(Pageable pageable, Long hostId) {
+	public Slice<FindApplicantDetailsResult> findApplicantDetails(String cursor, int size, Long hostId) {
 		List<FindApplicantDetailsResult> content = queryFactory
 			.select(Projections.constructor(FindApplicantDetailsResult.class,
 				accompanyRequest.id,
@@ -80,7 +82,13 @@ public class AccompanyRequestRepositoryImpl implements AccompanyRequestRepositor
 				user.nickname,
 				user.provider,
 				user.profileImageUrl,
-				Expressions.stringTemplate("GROUP_CONCAT(DISTINCT {0})", userImage.imageUrl)))
+				Expressions.stringTemplate("GROUP_CONCAT(DISTINCT {0})", userImage.imageUrl),
+				Expressions.stringTemplate(
+					"CONCAT(DATE_FORMAT({0}, '%Y%m%d%H%i%S'), LPAD(CAST({1} AS STRING), 6, '0'))",
+					accompanyRequest.updatedAt,
+					accompanyRequest.id
+				))
+			)
 			.from(accompanyUser)
 			.join(accompanyUser.accompanyBoard, accompanyBoard)
 			.join(accompanyRequest).on(accompanyRequest.accompanyBoard.id.eq(accompanyBoard.id))
@@ -89,19 +97,13 @@ public class AccompanyRequestRepositoryImpl implements AccompanyRequestRepositor
 			.where(isHost())
 			.where(accompanyUser.user.id.eq(hostId))
 			.where(accompanyRequest.requestState.eq(HOLDING))
+			.where(cursorCondition(cursor, accompanyRequest.updatedAt, accompanyRequest.id))
 			.groupBy(accompanyRequest.id, user.id, user.nickname, user.provider,
 				user.profileImageUrl)
-			.orderBy(accompanyRequest.updatedAt.desc(), accompanyRequest.createdAt.desc())
-			.offset(pageable.getOffset())
-			.limit(pageable.getPageSize() + 1)
+			.orderBy(accompanyRequest.updatedAt.desc(), accompanyRequest.id.desc())
+			.limit(size + 1)
 			.fetch();
 
-		boolean hasNext = content.size() > pageable.getPageSize();
-
-		if (hasNext) {
-			content.remove(content.size() - 1);
-		}
-
-		return new SliceImpl<>(content, pageable, hasNext);
+		return createSlice(size, content);
 	}
 }

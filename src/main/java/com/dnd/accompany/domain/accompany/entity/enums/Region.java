@@ -15,4 +15,17 @@ public enum Region {
 	Region(String description) {
 		this.description = description;
 	}
+
+	public String description() {
+		return description;
+	}
+
+	public static Region from(String keyword) {
+		for (Region region : Region.values()) {
+			if (region.description().contains(keyword)) {
+				return region;
+			}
+		}
+		return null;
+	}
 }
