@@ -2,7 +2,9 @@ package com.dnd.accompany.domain.review.service;
 
 import com.dnd.accompany.domain.accompany.entity.AccompanyBoard;
 import com.dnd.accompany.domain.accompany.infrastructure.AccompanyBoardRepository;
+import com.dnd.accompany.domain.review.api.dto.AllEvaluationResponses;
 import com.dnd.accompany.domain.review.api.dto.CreateReviewRequest;
+import com.dnd.accompany.domain.review.api.dto.EvaluationResponse;
 import com.dnd.accompany.domain.review.api.dto.ReviewDetailsResult;
 import com.dnd.accompany.domain.review.api.dto.SimpleEvaluationResponse;
 import com.dnd.accompany.domain.review.api.dto.SimpleEvaluationResult;
@@ -10,7 +12,6 @@ import com.dnd.accompany.domain.review.api.dto.SimpleReviewResponses;
 import com.dnd.accompany.domain.review.api.dto.SimpleReviewResult;
 import com.dnd.accompany.domain.review.api.dto.TypeCountResult;
 import com.dnd.accompany.domain.review.entity.Review;
-import com.dnd.accompany.domain.review.entity.enums.TravelStyleType;
 import com.dnd.accompany.domain.review.infrastructure.ReviewRepository;
 import com.dnd.accompany.domain.user.entity.User;
 import com.dnd.accompany.domain.user.infrastructure.UserRepository;
@@ -21,6 +22,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 
@@ -98,29 +100,57 @@ public class ReviewService {
         }
     }
 
-    public SimpleEvaluationResponse getEvaluation(Long userId) {
+    public AllEvaluationResponses getEvaluation(Long userId) {
         User receiver = getUser(userId);
         SimpleEvaluationResult evaluations = getEvaluations(userId);
 
-        TypeCountResult topTravelStyle = evaluations.getTravelStyles().stream()
-                .max(Comparator.comparingLong(TypeCountResult::getCount))
-                .orElse(null);
+        List<TypeCountResult> travelStyles = evaluations.getTravelStyles();
+        List<TypeCountResult> travelPreferences = evaluations.getTravelPreferences();
+        List<TypeCountResult> personalities = evaluations.getPersonalityTypes();
 
-        TypeCountResult topTravelPreference = evaluations.getTravelPreferences().stream()
-                .max(Comparator.comparingLong(TypeCountResult::getCount))
-                .orElse(null);
+        List<TypeCountResult> combinedResults = new ArrayList<>();
+        combinedResults.addAll(travelStyles);
+        combinedResults.addAll(travelPreferences);
+        combinedResults.addAll(personalities);
 
-        TypeCountResult topPersonalityType = evaluations.getPersonalityTypes().stream()
-                .max(Comparator.comparingLong(TypeCountResult::getCount))
-                .orElse(null);
+        combinedResults.sort(Comparator.comparingLong(TypeCountResult::getCount).reversed());
+
+        List<EvaluationResponse> evaluationResponses = combinedResults.stream()
+                .map(EvaluationResponse::create)
+                .toList();
+
+        return AllEvaluationResponses.builder()
+                .evaluationResponse(evaluationResponses)
+                .evaluationCount(receiver.getEvaluationCount())
+                .build();
+    }
+
+    public SimpleEvaluationResponse getSimpleEvaluation(Long userId) {
+        User receiver = getUser(userId);
+        SimpleEvaluationResult evaluations = getEvaluations(userId);
+
+        List<EvaluationResponse> evaluationResponses = List.of(
+                EvaluationResponse.create(
+                        evaluations.getTravelStyles().stream()
+                                .max(Comparator.comparingLong(TypeCountResult::getCount))
+                                .orElse(null)
+                ),
+
+                EvaluationResponse.create(
+                        evaluations.getTravelPreferences().stream()
+                                .max(Comparator.comparingLong(TypeCountResult::getCount))
+                                .orElse(null)
+                ),
+
+                EvaluationResponse.create(
+                        evaluations.getPersonalityTypes().stream()
+                                .max(Comparator.comparingLong(TypeCountResult::getCount))
+                                .orElse(null)
+                )
+        );
 
         return SimpleEvaluationResponse.builder()
-                .travelStyle(topTravelStyle != null ? topTravelStyle.getType() : null)
-                .travelStyleCount(topTravelStyle != null ? topTravelStyle.getCount() : 0)
-                .travelPreference(topTravelPreference != null ? topTravelPreference.getType() : null)
-                .travelPreferenceCount(topTravelPreference != null ? topTravelPreference.getCount() : 0)
-                .personalityType(topPersonalityType != null ? topPersonalityType.getType() : null)
-                .personalityTypeCount(topPersonalityType != null ? topPersonalityType.getCount() : 0)
+                .evaluationResponse(evaluationResponses)
                 .evaluationCount(receiver.getEvaluationCount())
                 .build();
     }

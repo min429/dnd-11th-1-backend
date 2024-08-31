@@ -1,6 +1,7 @@
 package com.dnd.accompany.domain.review.api;
 
 import com.dnd.accompany.domain.auth.dto.jwt.JwtAuthentication;
+import com.dnd.accompany.domain.review.api.dto.AllEvaluationResponses;
 import com.dnd.accompany.domain.review.api.dto.CreateReviewRequest;
 import com.dnd.accompany.domain.review.api.dto.ReviewDetailsResponse;
 import com.dnd.accompany.domain.review.api.dto.ReviewDetailsResult;
@@ -63,9 +64,18 @@ public class ReviewController {
     @Operation(summary = "받은 동행 평가 조회")
     @GetMapping("/evaluations")
     public ResponseEntity<SimpleEvaluationResponse> getEvaluation(
-            @AuthenticationPrincipal JwtAuthentication user
+//            @AuthenticationPrincipal JwtAuthentication user
     ) {
-        SimpleEvaluationResponse response = reviewService.getEvaluation(user.getId());
+        SimpleEvaluationResponse response = reviewService.getSimpleEvaluation(3L);
+        return ResponseEntity.ok(response);
+    }
+
+    @Operation(summary = "받은 모든 동행 평가 조회")
+    @GetMapping("/evaluations/all")
+    public ResponseEntity<AllEvaluationResponses> getEvaluations(
+//            @AuthenticationPrincipal JwtAuthentication user
+    ) {
+        AllEvaluationResponses response = reviewService.getEvaluation(3L);
         return ResponseEntity.ok(response);
     }
 }

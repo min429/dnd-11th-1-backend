@@ -5,8 +5,8 @@ import lombok.Builder;
 import java.util.List;
 
 @Builder
-public record SimpleEvaluationResponse(
+public record AllEvaluationResponses (
         List<EvaluationResponse> evaluationResponse,
         int evaluationCount
-) {
+){
 }
