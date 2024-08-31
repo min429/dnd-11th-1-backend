@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.dnd.accompany.domain.accompany.api.dto.AccompanyBoardThumbnail;
+import com.dnd.accompany.domain.accompany.api.dto.AccompanyRecordThumbnail;
 import com.dnd.accompany.domain.accompany.api.dto.CreateAccompanyBoardRequest;
 import com.dnd.accompany.domain.accompany.api.dto.CreateAccompanyBoardResponse;
 import com.dnd.accompany.domain.accompany.api.dto.CreateAccompanyRequest;
@@ -109,7 +110,7 @@ public class AccompanyBoardController {
 
 	@Operation(summary = "동행 기록 조회")
 	@PostMapping("/records")
-	public ResponseEntity<PageResponse<AccompanyBoardThumbnail>> readAllRecords(
+	public ResponseEntity<PageResponse<AccompanyRecordThumbnail>> readAllRecords(
 		@RequestBody @Valid PageRequest request,
 		@AuthenticationPrincipal JwtAuthentication user) {
 		return ResponseEntity.ok(accompanyBoardService.getAllRecords(request, user.getId()));

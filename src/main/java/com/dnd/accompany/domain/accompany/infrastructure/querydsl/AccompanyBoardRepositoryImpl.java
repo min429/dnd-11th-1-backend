@@ -9,6 +9,7 @@ import static com.dnd.accompany.domain.accompany.entity.QAccompanyTag.*;
 import static com.dnd.accompany.domain.accompany.entity.QAccompanyUser.*;
 import static com.dnd.accompany.domain.accompany.entity.enums.Region.*;
 import static com.dnd.accompany.domain.accompany.entity.enums.Role.*;
+import static com.dnd.accompany.domain.review.entity.QReview.*;
 import static com.dnd.accompany.domain.user.entity.QUser.*;
 
 import java.util.List;
@@ -20,6 +21,7 @@ import org.springframework.data.domain.SliceImpl;
 import org.springframework.stereotype.Repository;
 
 import com.dnd.accompany.domain.accompany.api.dto.FindBoardThumbnailsResult;
+import com.dnd.accompany.domain.accompany.api.dto.FindRecordThumbnailsResult;
 import com.dnd.accompany.domain.accompany.api.dto.FindSlicesResult;
 import com.dnd.accompany.domain.accompany.entity.enums.Region;
 import com.dnd.accompany.domain.accompany.infrastructure.querydsl.interfaces.AccompanyBoardRepositoryCustom;
@@ -105,15 +107,16 @@ public class AccompanyBoardRepositoryImpl implements AccompanyBoardRepositoryCus
 	}
 
 	@Override
-	public Slice<FindBoardThumbnailsResult> findRecordsByUserId(String cursor, int size, Long userId) {
-		List<FindBoardThumbnailsResult> content = queryFactory
-			.select(Projections.constructor(FindBoardThumbnailsResult.class,
+	public Slice<FindRecordThumbnailsResult> findRecordThumbnails(String cursor, int size, Long userId) {
+		List<FindRecordThumbnailsResult> content = queryFactory
+			.select(Projections.constructor(FindRecordThumbnailsResult.class,
 				accompanyBoard.id,
 				accompanyBoard.title,
 				accompanyBoard.region,
 				accompanyBoard.startDate,
 				accompanyBoard.endDate,
 				user.nickname,
+				review.id,
 				Expressions.stringTemplate("GROUP_CONCAT(DISTINCT {0})", accompanyImage.imageUrl),
 				Expressions.stringTemplate(
 					"CONCAT(DATE_FORMAT({0}, '%Y%m%d%H%i%S'), LPAD(CAST({1} AS STRING), 6, '0'))",
@@ -125,11 +128,13 @@ public class AccompanyBoardRepositoryImpl implements AccompanyBoardRepositoryCus
 			.join(accompanyUser.accompanyBoard, accompanyBoard)
 			.join(accompanyUser.user, user)
 			.leftJoin(accompanyImage).on(accompanyImage.accompanyBoard.id.eq(accompanyBoard.id))
+			.leftJoin(review).on(review.accompanyBoardId.eq(accompanyBoard.id))
+			.where(review.writerId.eq(userId))
 			.where(accompanyUser.user.id.eq(userId))
 			.where(cursorCondition(cursor, accompanyUser.updatedAt, accompanyUser.id))
 			.groupBy(accompanyBoard.id, accompanyBoard.title, accompanyBoard.region,
 				accompanyBoard.startDate, accompanyBoard.endDate, user.nickname,
-				accompanyUser.id)
+				accompanyUser.id, review.id)
 			.orderBy(accompanyUser.updatedAt.desc(), accompanyUser.id.desc())
 			.limit(size + 1)
 			.fetch();

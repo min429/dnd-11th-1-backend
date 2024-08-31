@@ -10,9 +10,12 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.dnd.accompany.domain.accompany.api.dto.AccompanyBoardThumbnail;
+import com.dnd.accompany.domain.accompany.api.dto.AccompanyRecordThumbnail;
 import com.dnd.accompany.domain.accompany.api.dto.CreateAccompanyBoardRequest;
 import com.dnd.accompany.domain.accompany.api.dto.FindBoardThumbnailResult;
 import com.dnd.accompany.domain.accompany.api.dto.FindBoardThumbnailsResult;
+import com.dnd.accompany.domain.accompany.api.dto.FindRecordThumbnailsResult;
+
 import com.dnd.accompany.domain.accompany.api.dto.PageRequest;
 import com.dnd.accompany.domain.accompany.api.dto.PageResponse;
 import com.dnd.accompany.domain.accompany.entity.AccompanyBoard;
@@ -68,21 +71,20 @@ public class AccompanyBoardService {
 	@Transactional(readOnly = true)
 	public PageResponse<AccompanyBoardThumbnail> getAllBoards(PageRequest request, Region region) {
 		Slice<FindBoardThumbnailsResult> sliceResult = accompanyBoardRepository.findBoardThumbnails(request.cursor(), request.size(), region);
-
-		List<AccompanyBoardThumbnail> thumbnails = getBoardThumbnails(sliceResult.getContent());
+  
+    List<AccompanyBoardThumbnail> thumbnails = getBoardThumbnails(sliceResult.getContent());
 
 		return new PageResponse<>(sliceResult.hasNext(), thumbnails, getLastCursor(sliceResult.getContent()));
-	}
+  }
 
 	@Transactional(readOnly = true)
-	public PageResponse<AccompanyBoardThumbnail> getAllRecords(PageRequest request, Long userId) {
-		Slice<FindBoardThumbnailsResult> sliceResult = accompanyBoardRepository.findRecordsByUserId(request.cursor(), request.size(), userId);
+	public PageResponse<AccompanyRecordThumbnail> getAllRecords(PageRequest request, Long userId) {
+		Slice<FindRecordThumbnailsResult> sliceResult = accompanyBoardRepository.findRecordThumbnails(request.cursor(), request.size(), userId);
 
-		List<AccompanyBoardThumbnail> thumbnails = getBoardThumbnails(sliceResult.getContent());
+		List<AccompanyRecordThumbnail> thumbnails = getRecordThumbnails(sliceResult.getContent());
 
 		return new PageResponse<>(sliceResult.hasNext(), thumbnails, getLastCursor(sliceResult.getContent()));
 	}
-
 
 	/**
 	 * imageUrls의 타입을 String -> List<String>로 변환합니다.
@@ -96,6 +98,22 @@ public class AccompanyBoardService {
 				.startDate(result.getStartDate())
 				.endDate(result.getEndDate())
 				.nickname(result.getNickname())
+				.imageUrls(result.getImageUrlsAsList())
+				.build())
+			.toList();
+		return thumbnails;
+	}
+
+	private List<AccompanyRecordThumbnail> getRecordThumbnails(List<FindRecordThumbnailsResult> results) {
+		List<AccompanyRecordThumbnail> thumbnails = results.stream()
+			.map(result -> AccompanyRecordThumbnail.builder()
+				.boardId(result.getRequestId())
+				.title(result.getTitle())
+				.region(result.getRegion())
+				.startDate(result.getStartDate())
+				.endDate(result.getEndDate())
+				.nickname(result.getNickname())
+				.reviewId(result.getReviewId())
 				.imageUrls(result.getImageUrlsAsList())
 				.build())
 			.toList();
