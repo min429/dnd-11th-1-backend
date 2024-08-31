@@ -60,6 +60,7 @@ public class AccompanyBoardService {
 		return new PageResponse<>(sliceResult.hasNext(), thumbnails, getLastCursor(sliceResult.getContent()));
 	}
 
+	@Transactional(readOnly = true)
   public PageResponse<AccompanyBoardThumbnail> getMatchedBoards(PageRequest request, String keyword) {
 		Slice<FindBoardThumbnailsResult> sliceResult = accompanyBoardRepository.findBoardThumbnailsByKeyword(request.cursor(), request.size(), keyword);
 
