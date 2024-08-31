@@ -4,6 +4,7 @@ import static com.dnd.accompany.domain.accompany.api.dto.FindSlicesResult.*;
 import static com.dnd.accompany.domain.accompany.api.dto.PageRequest.*;
 import static com.dnd.accompany.domain.accompany.entity.QAccompanyBoard.*;
 import static com.dnd.accompany.domain.accompany.entity.QAccompanyImage.*;
+import static com.dnd.accompany.domain.accompany.entity.QAccompanyRequest.*;
 import static com.dnd.accompany.domain.accompany.entity.QAccompanyTag.*;
 import static com.dnd.accompany.domain.accompany.entity.QAccompanyUser.*;
 import static com.dnd.accompany.domain.accompany.entity.enums.Region.*;
@@ -12,12 +13,14 @@ import static com.dnd.accompany.domain.user.entity.QUser.*;
 
 import java.util.List;
 
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.data.domain.SliceImpl;
 import org.springframework.stereotype.Repository;
 
 import com.dnd.accompany.domain.accompany.api.dto.FindBoardThumbnailsResult;
+import com.dnd.accompany.domain.accompany.api.dto.FindSlicesResult;
 import com.dnd.accompany.domain.accompany.entity.enums.Region;
 import com.dnd.accompany.domain.accompany.infrastructure.querydsl.interfaces.AccompanyBoardRepositoryCustom;
 import com.querydsl.core.BooleanBuilder;
@@ -102,7 +105,7 @@ public class AccompanyBoardRepositoryImpl implements AccompanyBoardRepositoryCus
 	}
 
 	@Override
-	public Slice<FindBoardThumbnailsResult> findBoardThumbnailsByUserId(String cursor, int size, Long userId) {
+	public Slice<FindBoardThumbnailsResult> findRecordsByUserId(String cursor, int size, Long userId) {
 		List<FindBoardThumbnailsResult> content = queryFactory
 			.select(Projections.constructor(FindBoardThumbnailsResult.class,
 				accompanyBoard.id,
@@ -128,6 +131,40 @@ public class AccompanyBoardRepositoryImpl implements AccompanyBoardRepositoryCus
 				accompanyBoard.startDate, accompanyBoard.endDate, user.nickname,
 				accompanyUser.id)
 			.orderBy(accompanyUser.updatedAt.desc(), accompanyUser.id.desc())
+			.limit(size + 1)
+			.fetch();
+
+		return createSlice(size, content);
+	}
+
+	@Override
+	public Slice<FindBoardThumbnailsResult> findBoardThumbnailsByHostId(String cursor, int size, Long hostId) {
+		List<FindBoardThumbnailsResult> content = queryFactory
+			.select(Projections.constructor(FindBoardThumbnailsResult.class,
+				accompanyBoard.id,
+				accompanyBoard.title,
+				accompanyBoard.region,
+				accompanyBoard.startDate,
+				accompanyBoard.endDate,
+				user.nickname,
+				Expressions.stringTemplate("GROUP_CONCAT(DISTINCT {0})", accompanyImage.imageUrl),
+				Expressions.stringTemplate(
+					"CONCAT(DATE_FORMAT({0}, '%Y%m%d%H%i%S'), LPAD(CAST({1} AS STRING), 6, '0'))",
+					accompanyBoard.updatedAt,
+					accompanyBoard.id
+				))
+			)
+			.from(accompanyUser)
+			.join(accompanyUser.accompanyBoard, accompanyBoard)
+			.join(accompanyUser.user, user)
+			.leftJoin(accompanyImage).on(accompanyImage.accompanyBoard.id.eq(accompanyBoard.id))
+			.where(accompanyUser.user.id.eq(hostId))
+			.where(isHost())
+			.where(cursorCondition(cursor, accompanyBoard.updatedAt, accompanyBoard.id))
+			.groupBy(accompanyBoard.id, accompanyBoard.title, accompanyBoard.region,
+				accompanyBoard.startDate, accompanyBoard.endDate, user.nickname,
+				accompanyUser.id)
+			.orderBy(accompanyBoard.updatedAt.desc(), accompanyBoard.id.desc())
 			.limit(size + 1)
 			.fetch();
 

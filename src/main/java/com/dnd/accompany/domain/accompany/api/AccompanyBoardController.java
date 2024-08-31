@@ -66,6 +66,14 @@ public class AccompanyBoardController {
 		return ResponseEntity.ok(accompanyBoardService.getAllBoards(request, region));
 	}
 
+	@Operation(summary = "내가 쓴 동행글 목록 조회")
+	@PostMapping("/mine")
+	public ResponseEntity<PageResponse<AccompanyBoardThumbnail>> readMine(
+		@RequestBody @Valid PageRequest request,
+		@AuthenticationPrincipal JwtAuthentication user) {
+		return ResponseEntity.ok(accompanyBoardService.getMyBoards(request, user.getId()));
+	}
+
 	@Operation(summary = "동행글 상세 조회")
 	@GetMapping("/{id}")
 	public ResponseEntity<ReadAccompanyBoardResponse> read(@PathVariable Long id) {
