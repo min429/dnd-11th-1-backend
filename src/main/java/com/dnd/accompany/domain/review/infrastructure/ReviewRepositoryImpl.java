@@ -2,9 +2,9 @@ package com.dnd.accompany.domain.review.infrastructure;
 
 import com.dnd.accompany.domain.review.api.dto.SimpleEvaluationResult;
 import com.dnd.accompany.domain.review.api.dto.SimpleReviewResult;
+import com.dnd.accompany.domain.review.api.dto.TypeCountResult;
 import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.BooleanExpression;
-import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
@@ -17,7 +17,6 @@ import static com.dnd.accompany.domain.review.entity.QReview.review;
 import static com.dnd.accompany.domain.review.entity.QTravelPreference.travelPreference;
 import static com.dnd.accompany.domain.review.entity.QTravelStyle.travelStyle;
 import static com.dnd.accompany.domain.user.entity.QUser.user;
-import static com.querydsl.jpa.JPAExpressions.*;
 
 @Repository
 @RequiredArgsConstructor
@@ -47,36 +46,40 @@ public class ReviewRepositoryImpl implements ReviewRepositoryCustom{
 
     @Override
     public SimpleEvaluationResult findEvaluationsByReceiverId(Long userId) {
-        return jpaQueryFactory
-                .select(
-                        Projections.constructor(SimpleEvaluationResult.class,
-                                select(travelStyle.type)
-                                        .from(review)
-                                        .join(review.travelStyle, travelStyle)
-                                        .where(eqReceiver(userId))
-                                        .groupBy(travelStyle.type)
-                                        .orderBy(travelStyle.type.count().desc())
-                                        .limit(1),
+        List<TypeCountResult> travelStyleCounts = jpaQueryFactory
+                .select(Projections.constructor(TypeCountResult.class,
+                        travelStyle.type.stringValue(),
+                        travelStyle.type.count()
+                ))
+                .from(travelStyle)
+                .join(travelStyle.review, review)
+                .where(eqReceiver(userId))
+                .groupBy(travelStyle.type)
+                .fetch();
 
-                                select(travelPreference.type)
-                                        .from(review)
-                                        .join(review.travelPreference, travelPreference)
-                                        .where(eqReceiver(userId))
-                                        .groupBy(travelPreference.type)
-                                        .orderBy(travelPreference.type.count().desc())
-                                        .limit(1),
+        List<TypeCountResult> travelPreferenceCounts = jpaQueryFactory
+                .select(Projections.constructor(TypeCountResult.class,
+                        travelPreference.type.stringValue(),
+                        travelPreference.type.count()
+                ))
+                .from(travelPreference)
+                .join(travelPreference.review, review)
+                .where(eqReceiver(userId))
+                .groupBy(travelPreference.type)
+                .fetch();
 
-                                select(personality.type)
-                                        .from(review)
-                                        .join(review.personalityType, personality)
-                                        .where(eqReceiver(userId))
-                                        .groupBy(personality.type)
-                                        .orderBy(personality.type.count().desc())
-                                        .limit(1)
-                        )
-                )
-                .from(review)
-                .fetchFirst();
+        List<TypeCountResult> personalityCounts = jpaQueryFactory
+                .select(Projections.constructor(TypeCountResult.class,
+                        personality.type.stringValue(),
+                        personality.type.count()
+                ))
+                .from(personality)
+                .join(personality.review, review)
+                .where(eqReceiver(userId))
+                .groupBy(personality.type)
+                .fetch();
+
+        return new SimpleEvaluationResult(travelStyleCounts, travelPreferenceCounts, personalityCounts);
     }
 
     private BooleanExpression eqReceiver(Long receiverId) {
