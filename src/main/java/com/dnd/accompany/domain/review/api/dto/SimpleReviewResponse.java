@@ -3,19 +3,19 @@ package com.dnd.accompany.domain.review.api.dto;
 import com.dnd.accompany.domain.accompany.entity.enums.Region;
 import com.dnd.accompany.domain.user.entity.enums.Gender;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 
+@Builder
 @Getter
-@NoArgsConstructor
 @AllArgsConstructor
-public class SimpleReviewResult {
-    private Long id;
+public class SimpleReviewResponse {
+    private Long reviewId;
     private String nickname;
     private String profileImageUrl;
-    private int birthYear;
+    private int age;
     private Gender gender;
     private Region region;
     private LocalDateTime startDate;

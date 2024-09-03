@@ -64,18 +64,18 @@ public class ReviewController {
     @Operation(summary = "받은 동행 평가 조회")
     @GetMapping("/evaluations")
     public ResponseEntity<SimpleEvaluationResponse> getEvaluation(
-//            @AuthenticationPrincipal JwtAuthentication user
+            @AuthenticationPrincipal JwtAuthentication user
     ) {
-        SimpleEvaluationResponse response = reviewService.getSimpleEvaluation(3L);
+        SimpleEvaluationResponse response = reviewService.getSimpleEvaluation(user.getId());
         return ResponseEntity.ok(response);
     }
 
     @Operation(summary = "받은 모든 동행 평가 조회")
     @GetMapping("/evaluations/all")
     public ResponseEntity<AllEvaluationResponses> getEvaluations(
-//            @AuthenticationPrincipal JwtAuthentication user
+            @AuthenticationPrincipal JwtAuthentication user
     ) {
-        AllEvaluationResponses response = reviewService.getEvaluation(3L);
+        AllEvaluationResponses response = reviewService.getEvaluation(user.getId());
         return ResponseEntity.ok(response);
     }
 }

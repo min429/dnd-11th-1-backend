@@ -23,6 +23,7 @@ import java.util.List;
 @AllArgsConstructor
 public class ReviewDetailsResult {
     private String nickname;
+    private String receiverNickname;
     private Region region;
     private LocalDateTime startDate;
     private LocalDateTime endDate;
@@ -33,9 +34,10 @@ public class ReviewDetailsResult {
     private String detailContent;
     private List<String> imageUrl;
 
-    public static ReviewDetailsResult of(User user, Review review, AccompanyBoard accompanyBoard) {
+    public static ReviewDetailsResult of(User me, User user, Review review, AccompanyBoard accompanyBoard) {
         return new ReviewDetailsResult(
                 user.getNickname(),
+                me.getNickname(),
                 accompanyBoard.getRegion(),
                 accompanyBoard.getStartDate(),
                 accompanyBoard.getEndDate(),

@@ -17,6 +17,7 @@ import static com.dnd.accompany.domain.review.entity.QReview.review;
 import static com.dnd.accompany.domain.review.entity.QTravelPreference.travelPreference;
 import static com.dnd.accompany.domain.review.entity.QTravelStyle.travelStyle;
 import static com.dnd.accompany.domain.user.entity.QUser.user;
+import static com.dnd.accompany.domain.user.entity.QUserProfile.userProfile;
 
 @Repository
 @RequiredArgsConstructor
@@ -28,8 +29,11 @@ public class ReviewRepositoryImpl implements ReviewRepositoryCustom{
     public List<SimpleReviewResult> findAllByReceiverId(Long receiverId) {
         return jpaQueryFactory
                 .select(Projections.constructor(SimpleReviewResult.class,
+                        review.id,
                         user.nickname,
                         user.profileImageUrl,
+                        userProfile.birthYear,
+                        userProfile.gender,
                         accompanyBoard.region,
                         accompanyBoard.startDate,
                         accompanyBoard.endDate,
@@ -40,6 +44,8 @@ public class ReviewRepositoryImpl implements ReviewRepositoryCustom{
                     .on(review.accompanyBoardId.eq(accompanyBoard.id))
                 .join(user)
                     .on(review.writerId.eq(user.id))
+                .join(user)
+                    .on(userProfile.userId.eq(user.id))
                 .where(eqReceiver(receiverId))
                 .fetch();
     }

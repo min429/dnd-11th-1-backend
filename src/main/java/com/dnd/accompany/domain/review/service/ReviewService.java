@@ -8,6 +8,7 @@ import com.dnd.accompany.domain.review.api.dto.EvaluationResponse;
 import com.dnd.accompany.domain.review.api.dto.ReviewDetailsResult;
 import com.dnd.accompany.domain.review.api.dto.SimpleEvaluationResponse;
 import com.dnd.accompany.domain.review.api.dto.SimpleEvaluationResult;
+import com.dnd.accompany.domain.review.api.dto.SimpleReviewResponse;
 import com.dnd.accompany.domain.review.api.dto.SimpleReviewResponses;
 import com.dnd.accompany.domain.review.api.dto.SimpleReviewResult;
 import com.dnd.accompany.domain.review.api.dto.TypeCountResult;
@@ -22,6 +23,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
@@ -62,13 +64,14 @@ public class ReviewService {
     @Transactional(readOnly = true)
     public ReviewDetailsResult getReviewDetails(Long userId, Long reviewId) {
         Review review = getReview(reviewId);
+        User me = getUser(userId);
 
         validateReceiver(userId, review);
 
         User writer = getUser(review.getWriterId());
         AccompanyBoard accompanyBoard = getAccompanyBoard(review.getAccompanyBoardId());
 
-        return ReviewDetailsResult.of(writer, review, accompanyBoard);
+        return ReviewDetailsResult.of(me, writer, review, accompanyBoard);
     }
 
     @Transactional(readOnly = true)
@@ -76,7 +79,22 @@ public class ReviewService {
         List<SimpleReviewResult> results = reviewRepository.findAllByReceiverId(userId);
         int totalCount = results.size();
 
-        return new SimpleReviewResponses(results, totalCount);
+        List<SimpleReviewResponse> responses = results.stream()
+                .map(result -> SimpleReviewResponse.builder()
+                        .reviewId(result.getId())
+                        .nickname(result.getNickname())
+                        .profileImageUrl(result.getProfileImageUrl())
+                        .age(LocalDate.now().getYear() - result.getBirthYear())
+                        .gender(result.getGender())
+                        .startDate(result.getStartDate())
+                        .endDate(result.getEndDate())
+                        .region(result.getRegion())
+                        .detailContent(result.getDetailContent())
+                        .build()
+                )
+                .toList();
+
+        return new SimpleReviewResponses(responses, totalCount);
     }
 
     private Review getReview(Long reviewId) {

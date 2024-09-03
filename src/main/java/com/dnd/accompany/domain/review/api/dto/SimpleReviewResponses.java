@@ -6,7 +6,7 @@ import java.util.List;
 
 @Builder
 public record SimpleReviewResponses(
-        List<SimpleReviewResult> results,
+        List<SimpleReviewResponse> responses,
         int totalCount
 ) {
 }
