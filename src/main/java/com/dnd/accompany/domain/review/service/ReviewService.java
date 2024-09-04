@@ -15,6 +15,8 @@ import com.dnd.accompany.domain.review.api.dto.TypeCountResult;
 import com.dnd.accompany.domain.review.entity.Review;
 import com.dnd.accompany.domain.review.infrastructure.ReviewRepository;
 import com.dnd.accompany.domain.user.entity.User;
+import com.dnd.accompany.domain.user.entity.UserProfile;
+import com.dnd.accompany.domain.user.infrastructure.UserProfileRepository;
 import com.dnd.accompany.domain.user.infrastructure.UserRepository;
 import com.dnd.accompany.global.common.exception.BadRequestException;
 import com.dnd.accompany.global.common.exception.NotFoundException;
@@ -33,6 +35,7 @@ import java.util.List;
 public class ReviewService {
 
     private final UserRepository userRepository;
+    private final UserProfileRepository userProfileRepository;
     private final ReviewRepository reviewRepository;
     private final AccompanyBoardRepository accompanyBoardRepository;
 
@@ -77,6 +80,8 @@ public class ReviewService {
     @Transactional(readOnly = true)
     public SimpleReviewResponses getReviewList(Long userId) {
         List<SimpleReviewResult> results = reviewRepository.findAllByReceiverId(userId);
+        UserProfile userProfile = getUserProfile(userId);
+
         int totalCount = results.size();
 
         List<SimpleReviewResponse> responses = results.stream()
@@ -84,8 +89,8 @@ public class ReviewService {
                         .reviewId(result.getId())
                         .nickname(result.getNickname())
                         .profileImageUrl(result.getProfileImageUrl())
-                        .age(LocalDate.now().getYear() - result.getBirthYear())
-                        .gender(result.getGender())
+                        .age(LocalDate.now().getYear() - userProfile.getBirthYear())
+                        .gender(userProfile.getGender())
                         .startDate(result.getStartDate())
                         .endDate(result.getEndDate())
                         .region(result.getRegion())
@@ -110,6 +115,11 @@ public class ReviewService {
     private AccompanyBoard getAccompanyBoard(Long accompanyBoardId) {
         return accompanyBoardRepository.findById(accompanyBoardId)
                 .orElseThrow(() -> new NotFoundException(ErrorCode.ACCOMPANY_BOARD_NOT_FOUND));
+    }
+
+    private UserProfile getUserProfile(Long userId) {
+        return userProfileRepository.findByUserId(userId)
+                .orElseThrow(() -> new NotFoundException(ErrorCode.PROFILE_NOT_FOUND));
     }
 
     private void validateReceiver(Long userId, Review review) {

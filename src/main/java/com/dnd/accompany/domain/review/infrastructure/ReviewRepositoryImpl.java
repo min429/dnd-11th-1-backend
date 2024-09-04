@@ -32,8 +32,6 @@ public class ReviewRepositoryImpl implements ReviewRepositoryCustom{
                         review.id,
                         user.nickname,
                         user.profileImageUrl,
-                        userProfile.birthYear,
-                        userProfile.gender,
                         accompanyBoard.region,
                         accompanyBoard.startDate,
                         accompanyBoard.endDate,
@@ -44,8 +42,6 @@ public class ReviewRepositoryImpl implements ReviewRepositoryCustom{
                     .on(review.accompanyBoardId.eq(accompanyBoard.id))
                 .join(user)
                     .on(review.writerId.eq(user.id))
-                .join(user)
-                    .on(userProfile.userId.eq(user.id))
                 .where(eqReceiver(receiverId))
                 .fetch();
     }
