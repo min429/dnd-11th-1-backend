@@ -90,16 +90,7 @@ public class AccompanyBoardController {
 		return ResponseEntity.ok().build();
 	}
 
-	@Operation(summary = "동행글 삭제(동행 기록까지 삭제)")
-	@DeleteMapping("/delete/{id}")
-	public ResponseEntity<Void> delete(
-		@AuthenticationPrincipal JwtAuthentication user,
-		@PathVariable Long id) {
-		accompanyServiceFacade.deleteBoard(user.getId(), id);
-		return ResponseEntity.ok().build();
-	}
-
-	@Operation(summary = "동행글 삭제(게시글만 삭제)")
+	@Operation(summary = "동행글 삭제")
 	@PostMapping("/remove/{id}")
 	public ResponseEntity<Void> remove(
 		@AuthenticationPrincipal JwtAuthentication user,
