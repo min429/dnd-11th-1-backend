@@ -11,6 +11,7 @@ import java.util.List;
 
 public record ReviewDetailsResponse(
         String writerNickname,
+        String myNickname,
         Region region,
         LocalDateTime startDate,
         LocalDateTime endDate,
@@ -25,6 +26,7 @@ public record ReviewDetailsResponse(
     public static ReviewDetailsResponse of(ReviewDetailsResult result) {
         return new ReviewDetailsResponse(
                 result.getNickname(),
+                result.getReceiverNickname(),
                 result.getRegion(),
                 result.getStartDate(),
                 result.getEndDate(),

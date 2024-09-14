@@ -8,6 +8,7 @@ import com.dnd.accompany.domain.review.api.dto.ReviewDetailsResult;
 import com.dnd.accompany.domain.review.api.dto.SimpleEvaluationResponse;
 import com.dnd.accompany.domain.review.api.dto.SimpleReviewResponses;
 import com.dnd.accompany.domain.review.service.ReviewService;
+import com.dnd.accompany.domain.user.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
@@ -47,6 +48,7 @@ public class ReviewController {
             @PathVariable("id") Long reviewId
     ) {
         ReviewDetailsResult result = reviewService.getReviewDetails(user.getId(), reviewId);
+
         ReviewDetailsResponse response = ReviewDetailsResponse.of(result);
 
         return ResponseEntity.ok(response);
