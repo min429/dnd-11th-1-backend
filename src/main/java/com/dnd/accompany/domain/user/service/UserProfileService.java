@@ -8,6 +8,7 @@ import com.dnd.accompany.domain.user.dto.UserProfileResponse;
 import com.dnd.accompany.domain.user.entity.User;
 import com.dnd.accompany.domain.user.entity.UserImage;
 import com.dnd.accompany.domain.user.entity.UserProfile;
+import com.dnd.accompany.domain.user.entity.enums.Grade;
 import com.dnd.accompany.domain.user.exception.UserProfileAlreadyExistsException;
 import com.dnd.accompany.domain.user.infrastructure.UserImageRepository;
 import com.dnd.accompany.domain.user.infrastructure.UserProfileRepository;
@@ -39,6 +40,7 @@ public class UserProfileService {
                 .travelPreferences(createUserProfileRequest.travelPreferences())
                 .travelStyles(createUserProfileRequest.travelStyles())
                 .foodPreferences(createUserProfileRequest.foodPreferences())
+                .grade(Grade.ROOKIE)
                 .build();
 
         userProfileRepository.save(userProfile);
