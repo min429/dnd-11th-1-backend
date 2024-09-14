@@ -5,6 +5,7 @@ import java.util.List;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.FetchType;
+import jakarta.persistence.Index;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.SQLRestriction;
 
@@ -30,7 +31,10 @@ import lombok.NoArgsConstructor;
 
 import static com.dnd.accompany.domain.user.entity.enums.Grade.ROOKIE;
 
-@Table(name = "user_profiles")
+@Table(name = "user_profiles",
+        indexes = {
+        @Index(name = "idx_user_profiles_u1", columnList = "userId", unique = true),
+})
 @Entity
 @Getter
 @Builder
@@ -44,7 +48,7 @@ public class UserProfile {
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
 
-  @Column(nullable = false)
+  @Column(nullable = false, name = "user_id")
   private Long userId;
 
   @Column(length = 50)
