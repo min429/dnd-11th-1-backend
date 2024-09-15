@@ -29,6 +29,9 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Objects;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Service
 @RequiredArgsConstructor
@@ -157,25 +160,30 @@ public class ReviewService {
         User receiver = getUser(userId);
         SimpleEvaluationResult evaluations = getEvaluations(userId);
 
-        List<EvaluationResponse> evaluationResponses = List.of(
-                EvaluationResponse.create(
-                        evaluations.getTravelStyles().stream()
-                                .max(Comparator.comparingLong(TypeCountResult::getCount))
-                                .orElse(null)
-                ),
+        List<EvaluationResponse> evaluationResponses = Stream.of(
+                        evaluations.getTravelStyles() != null && !evaluations.getTravelStyles().isEmpty() ?
+                                EvaluationResponse.create(
+                                        evaluations.getTravelStyles().stream()
+                                                .max(Comparator.comparingLong(TypeCountResult::getCount))
+                                                .orElse(null)
+                                ) : null,
 
-                EvaluationResponse.create(
-                        evaluations.getTravelPreferences().stream()
-                                .max(Comparator.comparingLong(TypeCountResult::getCount))
-                                .orElse(null)
-                ),
+                        evaluations.getTravelPreferences() != null && !evaluations.getTravelPreferences().isEmpty() ?
+                                EvaluationResponse.create(
+                                        evaluations.getTravelPreferences().stream()
+                                                .max(Comparator.comparingLong(TypeCountResult::getCount))
+                                                .orElse(null)
+                                ) : null,
 
-                EvaluationResponse.create(
-                        evaluations.getPersonalityTypes().stream()
-                                .max(Comparator.comparingLong(TypeCountResult::getCount))
-                                .orElse(null)
+                        evaluations.getPersonalityTypes() != null && !evaluations.getPersonalityTypes().isEmpty() ?
+                                EvaluationResponse.create(
+                                        evaluations.getPersonalityTypes().stream()
+                                                .max(Comparator.comparingLong(TypeCountResult::getCount))
+                                                .orElse(null)
+                                ) : null
                 )
-        );
+                .filter(Objects::nonNull)
+                .collect(Collectors.toList());
 
         return SimpleEvaluationResponse.builder()
                 .evaluationResponse(evaluationResponses)
