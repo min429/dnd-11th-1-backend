@@ -1,8 +1,5 @@
 package com.dnd.accompany.domain.accompany.api;
 
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
-import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -57,5 +54,12 @@ public class AccompanyRequestController {
 		@PathVariable(name = "id") Long requestId,
 		@AuthenticationPrincipal JwtAuthentication user) {
 		return ResponseEntity.ok(accompanyServiceFacade.getRequestDetail(requestId, user.getId()));
+	}
+
+	@Operation(summary = "동행 신청 취소")
+	@PostMapping("/{id}")
+	public ResponseEntity<Void> cancel(@PathVariable("id") Long requestId, @AuthenticationPrincipal JwtAuthentication user) {
+		accompanyRequestService.deleteRequest(requestId, user.getId());
+		return ResponseEntity.ok().build();
 	}
 }

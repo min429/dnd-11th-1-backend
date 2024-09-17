@@ -32,6 +32,7 @@ import com.dnd.accompany.domain.user.entity.User;
 import com.dnd.accompany.domain.user.entity.UserProfile;
 import com.dnd.accompany.domain.user.exception.UserNotFoundException;
 import com.dnd.accompany.domain.user.infrastructure.UserProfileRepository;
+import com.dnd.accompany.global.common.exception.BadRequestException;
 import com.dnd.accompany.global.common.response.ErrorCode;
 
 import lombok.RequiredArgsConstructor;
@@ -161,5 +162,18 @@ public class AccompanyRequestService {
 
 	public AccompanyBoard getAccompanyBoard(Long boardId) {
 		return AccompanyBoard.builder().id(boardId).build();
+	}
+
+	@Transactional
+	public void deleteRequest(Long requestId, Long userId){
+		AccompanyRequest accompanyRequest = accompanyRequestRepository.findById(requestId)
+			.orElseThrow(() -> new AccompanyRequestNotFoundException(ErrorCode.ACCOMPANY_REQUEST_NOT_FOUND));
+
+		Long requestUserId = accompanyRequest.getUser().getId();
+
+		if(userId != requestUserId)
+			throw new BadRequestException(ErrorCode.ACCESS_DENIED);
+
+		accompanyRequestRepository.delete(accompanyRequest);
 	}
 }
