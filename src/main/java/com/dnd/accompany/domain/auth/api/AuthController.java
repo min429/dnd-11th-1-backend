@@ -1,7 +1,9 @@
 package com.dnd.accompany.domain.auth.api;
 
 import com.dnd.accompany.domain.auth.dto.AuthUserInfo;
+import com.dnd.accompany.domain.auth.dto.DeleteUserRequest;
 import com.dnd.accompany.domain.auth.dto.Tokens;
+import com.dnd.accompany.domain.auth.dto.jwt.JwtAuthentication;
 import com.dnd.accompany.domain.auth.oauth.dto.LoginRequest;
 import com.dnd.accompany.domain.auth.oauth.dto.OAuthUserDataResponse;
 import com.dnd.accompany.domain.auth.oauth.dto.OAuthUserInfo;
@@ -12,6 +14,8 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -39,5 +43,18 @@ public class AuthController {
         Tokens tokens = tokenService.createTokens(authUserInfo);
 
         return ResponseEntity.ok(tokens);
+    }
+
+    @Operation(summary = "회원 탈퇴")
+    @DeleteMapping("/withdraw")
+    public ResponseEntity<Long> withdraw(
+            @AuthenticationPrincipal JwtAuthentication user,
+            @RequestBody DeleteUserRequest deleteUserRequest
+    ) {
+        Long userId = user.getId();
+        oAuthService.revoke(userId);
+        userService.delete(userId, deleteUserRequest);
+
+        return ResponseEntity.ok(userId);
     }
 }

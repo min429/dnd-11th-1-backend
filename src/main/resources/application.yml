@@ -11,9 +11,6 @@ spring:
       hibernate:
         format_sql: true
         hbm2ddl.auto: update
-  oauth2:
-    kakao:
-      host: https://kapi.kakao.com
 
 management:
   endpoints:
