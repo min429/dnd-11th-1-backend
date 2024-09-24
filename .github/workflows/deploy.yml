@@ -57,7 +57,7 @@ jobs:
       - name: Send docker-compose.yml
         uses: appleboy/scp-action@master
         with:
-          username: ec2-user
+          username: root
           host: ${{ secrets.AWS_DEV_IP }}
           key: ${{ secrets.AWS_PASSWORD }}
           port: 22
@@ -68,7 +68,7 @@ jobs:
       - name: Deploy
         uses: appleboy/ssh-action@master
         with:
-          username: ec2-user
+          username: root
           host: ${{ secrets.AWS_DEV_IP }}
           key: ${{ secrets.AWS_PASSWORD }}
           script: |
