@@ -1,5 +1,6 @@
 package com.dnd.accompany.domain.accompany.infrastructure.querydsl;
 
+import static com.dnd.accompany.domain.accompany.entity.QAccompanyUser.*;
 import static com.dnd.accompany.domain.user.entity.QUser.*;
 import static com.dnd.accompany.domain.user.entity.QUserProfile.*;
 
@@ -8,6 +9,7 @@ import java.util.Optional;
 import org.springframework.stereotype.Repository;
 
 import com.dnd.accompany.domain.accompany.api.dto.UserProfileThumbnail;
+import com.dnd.accompany.domain.accompany.entity.enums.Role;
 import com.dnd.accompany.domain.accompany.infrastructure.querydsl.interfaces.AccompanyUserRepositoryCustom;
 import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.impl.JPAQueryFactory;
@@ -49,5 +51,16 @@ public class AccompanyUserRepositoryImpl implements AccompanyUserRepositoryCusto
 			.from(user)
 			.where(user.id.eq(userId))
 			.fetchOne());
+	}
+
+	@Override
+	public boolean existsBy(Long userId, Long boardId, Role role) {
+		return queryFactory
+			.selectOne()
+			.from(accompanyUser)
+			.where(accompanyUser.user.id.eq(userId))
+			.where(accompanyUser.accompanyBoard.id.eq(boardId))
+			.where(accompanyUser.role.eq(role))
+			.fetchFirst() != null;
 	}
 }

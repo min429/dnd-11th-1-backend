@@ -11,6 +11,7 @@ import com.dnd.accompany.domain.accompany.infrastructure.AccompanyUserRepository
 import com.dnd.accompany.domain.user.entity.User;
 import com.dnd.accompany.domain.user.exception.UserNotFoundException;
 import com.dnd.accompany.domain.user.exception.UserProfileNotFoundException;
+import com.dnd.accompany.global.common.exception.BadRequestException;
 import com.dnd.accompany.global.common.response.ErrorCode;
 
 import lombok.RequiredArgsConstructor;
@@ -22,6 +23,12 @@ public class AccompanyUserService {
 
 	@Transactional
 	public void save(Long userId, AccompanyBoard accompanyBoard, Role role) {
+		boolean alreadyExists = accompanyUserRepository.existsBy(userId, accompanyBoard.getId(), role);
+
+		if (alreadyExists) {
+			throw new BadRequestException(ErrorCode.BAD_REQUEST);
+		}
+
 		accompanyUserRepository.save(AccompanyUser.builder()
 			.accompanyBoard(accompanyBoard)
 			.user(User.builder().id(userId).build())
@@ -40,7 +47,7 @@ public class AccompanyUserService {
 	}
 
 	@Transactional(readOnly = true)
-	public Long getHostIdByAccompanyBoardId(Long boardId){
+	public Long getHostIdByAccompanyBoardId(Long boardId) {
 		return accompanyUserRepository.findHostIdByAccompanyBoardId(boardId)
 			.orElseThrow(() -> new UserNotFoundException(ErrorCode.USER_NOT_FOUND));
 	}
@@ -51,7 +58,7 @@ public class AccompanyUserService {
 	}
 
 	@Transactional(readOnly = true)
-	public String getNickname(Long userId){
+	public String getNickname(Long userId) {
 		return accompanyUserRepository.findNickname(userId)
 			.orElseThrow(() -> new UserNotFoundException(ErrorCode.USER_NOT_FOUND));
 	}

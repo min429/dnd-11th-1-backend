@@ -13,6 +13,7 @@ import com.dnd.accompany.domain.accompany.api.dto.AccompanyBoardThumbnail;
 import com.dnd.accompany.domain.accompany.api.dto.AccompanyRequestDetailInfo;
 import com.dnd.accompany.domain.accompany.api.dto.CreateAccompanyBoardRequest;
 import com.dnd.accompany.domain.accompany.api.dto.CreateAccompanyBoardResponse;
+import com.dnd.accompany.domain.accompany.api.dto.CreateAccompanyRequest;
 import com.dnd.accompany.domain.accompany.api.dto.FindBoardThumbnailResult;
 import com.dnd.accompany.domain.accompany.api.dto.ReadAccompanyBoardResponse;
 import com.dnd.accompany.domain.accompany.api.dto.ReadAccompanyResponse;
@@ -37,6 +38,17 @@ public class AccompanyServiceFacade {
 	private final AccompanyUserService accompanyUserService;
 	private final AccompanyRequestService accompanyRequestService;
 	private final UserProfileService userProfileService;
+
+	@Transactional
+	public void request(Long userId, CreateAccompanyRequest request) {
+		Long hostId = accompanyUserService.getHostIdByAccompanyBoardId(request.boardId());
+
+		if (hostId == userId) {
+			throw new BadRequestException(ErrorCode.BAD_REQUEST);
+		}
+
+		accompanyRequestService.save(userId, request);
+	}
 
 	@Transactional
 	public CreateAccompanyBoardResponse createBoard(Long userId, CreateAccompanyBoardRequest request) {

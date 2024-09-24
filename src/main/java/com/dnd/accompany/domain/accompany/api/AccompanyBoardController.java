@@ -86,7 +86,7 @@ public class AccompanyBoardController {
 	public ResponseEntity<Void> request(
 		@AuthenticationPrincipal JwtAuthentication user,
 		@RequestBody @Valid CreateAccompanyRequest request) {
-		accompanyRequestService.save(user.getId(), request);
+		accompanyServiceFacade.request(user.getId(), request);
 		return ResponseEntity.ok().build();
 	}
 

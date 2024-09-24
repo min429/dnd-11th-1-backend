@@ -13,13 +13,11 @@ import static com.dnd.accompany.domain.user.entity.QUserImage.*;
 
 import java.util.List;
 
-import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
-import org.springframework.data.domain.SliceImpl;
 import org.springframework.stereotype.Repository;
 
-import com.dnd.accompany.domain.accompany.api.dto.FindBoardThumbnailsResult;
 import com.dnd.accompany.domain.accompany.api.dto.FindApplicantDetailsResult;
+import com.dnd.accompany.domain.accompany.api.dto.FindBoardThumbnailsResult;
 import com.dnd.accompany.domain.accompany.infrastructure.querydsl.interfaces.AccompanyRequestRepositoryCustom;
 import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.BooleanExpression;
@@ -105,5 +103,15 @@ public class AccompanyRequestRepositoryImpl implements AccompanyRequestRepositor
 			.fetch();
 
 		return createSlice(size, content);
+	}
+
+	@Override
+	public boolean existsBy(Long userId, Long boardId) {
+		return queryFactory
+			.selectOne()
+			.from(accompanyRequest)
+			.where(accompanyRequest.user.id.eq(userId))
+			.where(accompanyRequest.accompanyBoard.id.eq(boardId))
+			.fetchFirst() != null;
 	}
 }

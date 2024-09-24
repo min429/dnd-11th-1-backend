@@ -50,6 +50,12 @@ public class AccompanyRequestService {
 
 	@Transactional
 	public void save(Long userId, CreateAccompanyRequest request) {
+		boolean alreadyExists = accompanyRequestRepository.existsBy(userId, request.boardId());
+
+		if (alreadyExists) {
+			throw new BadRequestException(ErrorCode.BAD_REQUEST);
+		}
+
 		accompanyRequestRepository.save(AccompanyRequest.builder()
 			.user(User.builder().id(userId).build())
 			.accompanyBoard(getAccompanyBoard(request.boardId()))
