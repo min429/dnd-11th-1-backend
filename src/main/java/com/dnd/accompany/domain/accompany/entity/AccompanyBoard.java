@@ -92,4 +92,12 @@ public class AccompanyBoard extends TimeBaseEntity {
 	public void remove(){
 		this.boardStatus = REMOVED;
 	}
+
+	public void addHeadCount(){
+		headCount++;
+
+		if(headCount == capacity){
+			boardStatus = RECRUITMENT_COMPLETED;
+		}
+	}
 }

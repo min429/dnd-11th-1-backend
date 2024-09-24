@@ -76,4 +76,8 @@ public class AccompanyRequest extends TimeBaseEntity {
 		this.introduce = introduce;
 		this.chatLink = chatLink;
 	}
+
+	public void setRequestState(RequestState requestState) {
+		this.requestState = requestState;
+	}
 }

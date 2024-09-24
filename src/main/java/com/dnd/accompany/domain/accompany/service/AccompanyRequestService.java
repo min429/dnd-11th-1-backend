@@ -9,15 +9,14 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.dnd.accompany.domain.accompany.api.dto.AccompanyRequestDetailInfo;
 import com.dnd.accompany.domain.accompany.api.dto.CreateAccompanyRequest;
-import com.dnd.accompany.domain.accompany.api.dto.FindBoardThumbnailsResult;
 import com.dnd.accompany.domain.accompany.api.dto.FindApplicantDetailsResult;
+import com.dnd.accompany.domain.accompany.api.dto.FindBoardThumbnailsResult;
 import com.dnd.accompany.domain.accompany.api.dto.FindSlicesResult;
 import com.dnd.accompany.domain.accompany.api.dto.PageRequest;
 import com.dnd.accompany.domain.accompany.api.dto.PageResponse;
@@ -44,6 +43,12 @@ public class AccompanyRequestService {
 	private final UserProfileRepository userProfileRepository;
 
 	@Transactional
+	public AccompanyRequest getAccompanyRequest(Long requestId) {
+		return accompanyRequestRepository.findById(requestId)
+			.orElseThrow(() -> new AccompanyRequestNotFoundException(ErrorCode.ACCOMPANY_REQUEST_NOT_FOUND));
+	}
+
+	@Transactional
 	public void save(Long userId, CreateAccompanyRequest request) {
 		accompanyRequestRepository.save(AccompanyRequest.builder()
 			.user(User.builder().id(userId).build())
@@ -55,15 +60,17 @@ public class AccompanyRequestService {
 	}
 
 	@Transactional(readOnly = true)
-	public PageResponse<ReceivedAccompany> getAllReceivedAccompanies(PageRequest request, Long hostId){
-		Slice<FindApplicantDetailsResult> sliceResult = accompanyRequestRepository.findApplicantDetails(request.cursor(), request.size(), hostId);
+	public PageResponse<ReceivedAccompany> getAllReceivedAccompanies(PageRequest request, Long hostId) {
+		Slice<FindApplicantDetailsResult> sliceResult = accompanyRequestRepository.findApplicantDetails(
+			request.cursor(), request.size(), hostId);
 
 		Set<Long> userIds = getUserIds(sliceResult);
 		Map<Long, UserProfile> userProfileMap = getUserProfileMap(userIds);
 
 		List<ReceivedAccompany> receivedAccompanies = getReceivedAccompanies(sliceResult.getContent(), userProfileMap);
 
-		return new PageResponse<>(sliceResult.hasNext(), receivedAccompanies, FindSlicesResult.getLastCursor(sliceResult.getContent()));
+		return new PageResponse<>(sliceResult.hasNext(), receivedAccompanies,
+			FindSlicesResult.getLastCursor(sliceResult.getContent()));
 	}
 
 	private Set<Long> getUserIds(Slice<FindApplicantDetailsResult> results) {
@@ -80,34 +87,36 @@ public class AccompanyRequestService {
 	/**
 	 * imageUrls의 타입을 String -> List<String>로 변환합니다.
 	 */
-	private static List<ReceivedAccompany> getReceivedAccompanies(List<FindApplicantDetailsResult> results, Map<Long, UserProfile> userProfileMap) {
+	private static List<ReceivedAccompany> getReceivedAccompanies(List<FindApplicantDetailsResult> results,
+		Map<Long, UserProfile> userProfileMap) {
 		return results.stream()
 			.map(result -> {
 				UserProfile userProfile = userProfileMap.get(result.getUserId());
 
 				return ReceivedAccompany.builder()
-				.requestId(result.getRequestId())
-				.userId(result.getUserId())
-				.nickname(result.getNickname())
-				.provider(result.getProvider())
-				.profileImageUrl(result.getProfileImageUrl())
-				.description(userProfile.getDescription())
-				.gender(userProfile.getGender())
-				.birthYear(userProfile.getBirthYear())
-				.socialMediaUrl(userProfile.getSocialMediaUrl())
-				.grade(userProfile.getGrade())
-				.travelPreferences(userProfile.getTravelPreferences())
-				.travelStyles(userProfile.getTravelStyles())
-				.foodPreferences(userProfile.getFoodPreferences())
-				.userImageUrl(result.getImageUrlsAsList())
-				.build();
+					.requestId(result.getRequestId())
+					.userId(result.getUserId())
+					.nickname(result.getNickname())
+					.provider(result.getProvider())
+					.profileImageUrl(result.getProfileImageUrl())
+					.description(userProfile.getDescription())
+					.gender(userProfile.getGender())
+					.birthYear(userProfile.getBirthYear())
+					.socialMediaUrl(userProfile.getSocialMediaUrl())
+					.grade(userProfile.getGrade())
+					.travelPreferences(userProfile.getTravelPreferences())
+					.travelStyles(userProfile.getTravelStyles())
+					.foodPreferences(userProfile.getFoodPreferences())
+					.userImageUrl(result.getImageUrlsAsList())
+					.build();
 			})
 			.toList();
 	}
 
 	@Transactional(readOnly = true)
-	public PageResponse<SendedAccompany> getAllSendedAccompanies(PageRequest request, Long applicantId){
-		Slice<FindBoardThumbnailsResult> sliceResult = accompanyRequestRepository.findBoardThumbnails(request.cursor(), request.size(), applicantId);
+	public PageResponse<SendedAccompany> getAllSendedAccompanies(PageRequest request, Long applicantId) {
+		Slice<FindBoardThumbnailsResult> sliceResult = accompanyRequestRepository.findBoardThumbnails(request.cursor(),
+			request.size(), applicantId);
 
 		List<SendedAccompany> sendedAccompanies = getSendedAccompanies(sliceResult.getContent());
 
@@ -142,13 +151,14 @@ public class AccompanyRequestService {
 		return accompanyRequestRepository.findUserId(requestId)
 			.orElseThrow(() -> new UserNotFoundException(ErrorCode.USER_NOT_FOUND));
 	}
+
 	@Transactional(readOnly = true)
 	public AccompanyRequestDetailInfo getRequestDetailInfo(Long boardId, Long userId, boolean isReceived) {
 		AccompanyRequest accompanyRequest = accompanyRequestRepository.findRequestDetailInfo(boardId, userId)
-            .orElseThrow(() -> new AccompanyRequestNotFoundException(ErrorCode.ACCOMPANY_REQUEST_NOT_FOUND));
+			.orElseThrow(() -> new AccompanyRequestNotFoundException(ErrorCode.ACCOMPANY_REQUEST_NOT_FOUND));
 
-        return AccompanyRequestDetailInfo.builder()
-            .requestId(accompanyRequest.getId())
+		return AccompanyRequestDetailInfo.builder()
+			.requestId(accompanyRequest.getId())
 			.userId(accompanyRequest.getUser().getId())
 			.introduce(accompanyRequest.getIntroduce())
 			.chatLink(accompanyRequest.getChatLink())
@@ -156,7 +166,7 @@ public class AccompanyRequestService {
 			.build();
 	}
 
-	public Long getBoardId(Long requestId){
+	public Long getBoardId(Long requestId) {
 		return accompanyRequestRepository.findBoardId(requestId)
 			.orElseThrow(() -> new AccompanyBoardNotFoundException(ErrorCode.ACCOMPANY_BOARD_NOT_FOUND));
 	}
@@ -166,13 +176,13 @@ public class AccompanyRequestService {
 	}
 
 	@Transactional
-	public void deleteRequest(Long requestId, Long userId){
+	public void deleteRequest(Long requestId, Long userId) {
 		AccompanyRequest accompanyRequest = accompanyRequestRepository.findById(requestId)
 			.orElseThrow(() -> new AccompanyRequestNotFoundException(ErrorCode.ACCOMPANY_REQUEST_NOT_FOUND));
 
 		Long requestUserId = accompanyRequest.getUser().getId();
 
-		if(userId != requestUserId)
+		if (userId != requestUserId)
 			throw new BadRequestException(ErrorCode.ACCESS_DENIED);
 
 		accompanyRequestRepository.delete(accompanyRequest);
