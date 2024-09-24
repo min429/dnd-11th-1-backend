@@ -12,12 +12,14 @@ public class AccompanyRequestDetailInfo {
 	private Long userId;
 	private String introduce;
 	private String chatLink;
+	private boolean isReceived;
 
 	@Builder
-	public AccompanyRequestDetailInfo(Long requestId, Long userId, String introduce, String chatLink) {
+	public AccompanyRequestDetailInfo(Long requestId, Long userId, String introduce, String chatLink, boolean isReceived) {
 		this.requestId = requestId;
 		this.userId = userId;
 		this.introduce = introduce;
 		this.chatLink = chatLink;
+		this.isReceived = isReceived;
 	}
 }

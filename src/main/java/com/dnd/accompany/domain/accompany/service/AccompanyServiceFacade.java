@@ -123,7 +123,7 @@ public class AccompanyServiceFacade {
 			profileDetailInfo = getUserProfileDetailInfo(hostId);
 		}
 
-		requestDetailInfo = accompanyRequestService.getRequestDetailInfo(boardId, applicantId);
+		requestDetailInfo = accompanyRequestService.getRequestDetailInfo(boardId, applicantId, isReceived);
 
 		return new ReadAccompanyResponse(boardThumbnail, profileDetailInfo, requestDetailInfo);
 	}

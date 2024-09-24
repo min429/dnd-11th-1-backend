@@ -143,7 +143,7 @@ public class AccompanyRequestService {
 			.orElseThrow(() -> new UserNotFoundException(ErrorCode.USER_NOT_FOUND));
 	}
 	@Transactional(readOnly = true)
-	public AccompanyRequestDetailInfo getRequestDetailInfo(Long boardId, Long userId) {
+	public AccompanyRequestDetailInfo getRequestDetailInfo(Long boardId, Long userId, boolean isReceived) {
 		AccompanyRequest accompanyRequest = accompanyRequestRepository.findRequestDetailInfo(boardId, userId)
             .orElseThrow(() -> new AccompanyRequestNotFoundException(ErrorCode.ACCOMPANY_REQUEST_NOT_FOUND));
 
@@ -152,6 +152,7 @@ public class AccompanyRequestService {
 			.userId(accompanyRequest.getUser().getId())
 			.introduce(accompanyRequest.getIntroduce())
 			.chatLink(accompanyRequest.getChatLink())
+			.isReceived(isReceived)
 			.build();
 	}
 
