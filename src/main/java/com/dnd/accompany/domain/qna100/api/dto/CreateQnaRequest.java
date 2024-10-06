@@ -6,22 +6,20 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
-import com.dnd.accompany.domain.qna100.entity.Qna;
+import com.dnd.accompany.domain.qna100.entity.Qna100;
 
 import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Size;
 
 public record CreateQnaRequest(
-	List<@Size(max = 2000) String> questions,
-	List<@Size(max = 2000) String> answers
+	@NotNull List<Qna> qnas
 ) {
 
-	public List<Qna> toEntityList(Long userId) {
-		return IntStream.range(0, questions.size())
-			.mapToObj(i -> Qna.builder()
+	public List<Qna100> toEntityList(Long userId, List<Qna> qnas) {
+		return qnas.stream()
+			.map(qna -> Qna100.builder()
 				.userId(userId)
-				.question(questions.get(i))
-				.answer(answers.get(i))
+				.question(qna.questions())
+				.answer(qna.answers())
 				.build())
 			.collect(toList());
 	}

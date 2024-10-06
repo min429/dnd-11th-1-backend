@@ -1,8 +1,5 @@
 package com.dnd.accompany.domain.qna100.entity;
 
-import org.hibernate.annotations.SQLDelete;
-import org.hibernate.annotations.SQLRestriction;
-
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -20,8 +17,8 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
-@Table(name = "qnas")
-public class Qna {
+@Table(name = "qna100s")
+public class Qna100 {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)

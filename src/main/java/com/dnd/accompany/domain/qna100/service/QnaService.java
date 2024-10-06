@@ -6,7 +6,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.dnd.accompany.domain.qna100.api.dto.CreateQnaRequest;
-import com.dnd.accompany.domain.qna100.entity.Qna;
+import com.dnd.accompany.domain.qna100.entity.Qna100;
 import com.dnd.accompany.domain.qna100.infrastructure.QnaRepository;
 
 import lombok.RequiredArgsConstructor;
@@ -19,8 +19,8 @@ public class QnaService {
 
 	@Transactional
 	public void saveAll(Long userId, CreateQnaRequest request){
-		List<Qna> qnas = request.toEntityList(userId);
+		List<Qna100> qna100s = request.toEntityList(userId, request.qnas());
 		qnaRepository.deleteAllByUserId(userId);
-		qnaRepository.saveAll(qnas);
+		qnaRepository.saveAll(qna100s);
 	}
 }
